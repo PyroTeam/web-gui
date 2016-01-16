@@ -1,0 +1,35 @@
+http://answers.ros.org/question/207068/rosbridge-cannot-connect-to-secure-websocket-timed-out-error/
+
+roslaunch rosbridge_server rosbridge_websocket.launch ssl:=true certfile:=/etc/ssl/certs/ssl-cert-snakeoil.pem keyfile:=/etc/ssl/private/ssl-cert-snakeoil.key authenticate:=false
+
+$(document).ready(function(){   var ros = new ROSLIB.Ros({
+     url : 'wss://localhost:9090'    });
+
+   ros.on('connection', function() {
+     console.log('Connected to websocket server.');    });
+   ros.on('error', function(error) {
+     console.log('Error connecting to websocket server: ', error);    });
+   ros.on('close', function() {
+     console.log('Connection to websocket server closed.');    });  
+  });
+
+
+
+   ros = new ROSLIB.Ros 
+      ({ 
+        url : 'ws://127.0.0.1:9090'
+      });
+
+
+
+roscore
+
+rostopic pub /listener std_msgs/String "Hello, World"
+
+rostopic echo /cmd_vel
+
+rosrun rospy_tutorials add_two_ints_server
+
+roslaunch rosbridge_server rosbridge_websocket.launch
+
+rosrun turtlesim turtlesim_node
