@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8" />
 
-<!--
 
+
+<!--
+<script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script>
 <script type="text/javascript" src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
-<script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
 
 A remplacer par un git clone de 
 
@@ -29,350 +30,94 @@ dans le dossier ou sont stocker les pages js
 
 
 <script type="text/javascript" src="ros.js"></script>
-
-
-
-<script type="text/javascript" type="text/javascript">
-//lecture du formulaire
+<script type="text/javascript" src="form.js"></script>
+<link type="text/css" rel="stylesheet" href="css/style_Gtabs.css" />
+<link type="text/css" rel="stylesheet" href="css/style_Rtabs.css" />
+<link type="text/css" rel="stylesheet" href="css/style.css" />
 	
-	var ros ='';
-	var status ='closed';
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#Rtabs").tabs();
+});
 
-	function converse(message)
-	{
-	  var maj = document.getElementById("conversation").innerHTML;
-	  maj += '<br>' + message;
-	  document.getElementById("conversation").innerHTML = maj;
-	}
-
-	function conf(ech1)
-	{
-		var navigateur = new Array;
-		var floatType = ["float64","float32"];
-		
-		//navigateur[1] = document.getElementById('2').name;
-		//var test_def = typedef[navigateur[0]];
-		console.log('wait');
-
-		if(action == "topicPublisher")
-		{
-			/*var message = new Object(); 
-			var test = document.getElementById('1');
-			var test2 = document.getElementById('2');
-			message[test][test2]=document.getElementById('2').value;
-			console.log('test');*/
-			var type = document.getElementById('0').innerHTML;
-			var i = 1,j = 0;
-			if(document.getElementById(i).innerHTML == '' && i == 1)
-			{
-				while (document.getElementById(i) != null)
-				{
-					if(floatType.indexOf(document.getElementById(i).placeholder) != -1)
-						typedef[document.getElementById(i).name]=parseFloat(document.getElementById(i).value);
-					if(document.getElementById(i).placeholder == "uint8")
-						typedef[document.getElementById(i).name]=parseInt(document.getElementById(i).value);
-					i++
-				}
-			}
-			else
-			{
-				while (document.getElementById(i) != null)
-				{
-					
-					if (document.getElementById(i).innerHTML != '') 
-					{
-						if(i != 1)
-							j++;
-						navigateur[j] = document.getElementById(i).innerHTML;
-
-					}
-					else
-					{
-						if(floatType.indexOf(document.getElementById(i).placeholder) != -1)
-							typedef[navigateur[j]][document.getElementById(i).name]=parseFloat(document.getElementById(i).value);
-						if(document.getElementById(i).placeholder == "uint8")
-							typedef[navigateur[j]][document.getElementById(i).name]=parseInt(document.getElementById(i).value);
-					}
-					i++;
-				}
-			}
-			
-			var message = new ROSLIB.Message;
-			message = typedef;
-			publisher(ech1,type,message);
-			
-			
-		}
-	}
-
-	var id_echange_interactif = 0;
-	function recursive_key(object, iteration,formulaire)
-	{
-		if(formulaire != '')
-		{
-			formulaire = "<p id='"+id_echange_interactif+"'>"+formulaire+"</p>";
-			document.getElementById('echange_interactif').innerHTML = formulaire;
-		}
-		for (var key in object) 
-		{
-
-			id_echange_interactif++
-			//converse("name:"+key+" typeof:"+typeof object[key]);
-			if(typeof object[key] === 'object')
-			{
-				//converse("name:"+key+" typeof:"+typeof object[key]);
-				formulaire = "<p id='"+id_echange_interactif+"'>"+key+"</p>";
-				document.getElementById('echange_interactif').innerHTML += formulaire;
-				recursive_key(object[key],iteration++,'');
-			}
-			else 
-			{
-				//converse("name:"+key+" name:"+object[key]+" iteration:"+iteration);
-				formulaire = key+" <input type=\"text\" id='"+id_echange_interactif+"'name=\""+key+"\" value=\"\" placeholder=\""+object[key]+"\"size=\"15\">";
-				document.getElementById('echange_interactif').innerHTML += formulaire;
-			}
-		}
-	}
-
-	
-
-	function lecture()
-	{
-		var ech1 = document.getElementById('echange1').value;
-		var ech2 = document.getElementById('echange2').value;
-		var ech3 = document.getElementById('echange3').value;
-		console.log('lecture '+action);
-		if (action == "test")
-		{
-			converse(ech3);
-			ros.getTopicType(ech3,function(topicTypes)
-			{
-				//converse('types:'+topicTypes+'<br>');
-				type = topicTypes;
-				ros.getMessageDetails(type,function(getMessageDetails)
-				{
-					//converse('details:'+getMessageDetails+'<br>');
-					//console.log('details:'+getMessageDetails);
-					def = getMessageDetails;
-					typedef = ros.decodeTypeDefs(def);
-					//converse('def:'+typedef+'<br>');
-					//converse('def_sources:'+ def.toSource()+'<br>');
-					//converse('typedef_sources:'+ typedef.toSource()+'<br>');
-					//console.log('def:'+typedef);
-					//console.log('def_sources:'+ def.toSource());
-					//console.log('typedef_sources:'+ typedef.toSource());
-					document.getElementById('echange_interactif').innerHTML = "";
-					recursive_key(typedef,0,type);
-					id_echange_interactif = 0;
-				});
-			});
-			
-		}
-		if (action == "topicPublisher")
-		{
-			converse(ech1);
-			ros.getTopicType(ech1,function(topicTypes)
-			{
-				type = topicTypes;
-				ros.getMessageDetails(type,function(getMessageDetails)
-				{
-					def = getMessageDetails;
-					typedef = ros.decodeTypeDefs(def);
-					document.getElementById('echange_interactif').innerHTML = "";
-					recursive_key(typedef,0,type);
-					document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
-					id_echange_interactif = 0;
-					//return typedef;
-					
-				});
-			});
-			
-			
-		}
-
-		if (action == "topicSubscriber")
-		{
-			ros.getTopicType(ech1,function(topicTypes)
-			{
-				type = topicTypes;
-				subscriber(ech1,type);
-			});
-		}
-		
-	}	
-
-	function function_test()
-	{
-		ros.getTopics(function(topics) 
-		{
-		  	console.log('topics:'+topics);
-		  	converse('topics disponible:<br>'+topics+'<br>');
-		  	ros.getTopicType(topics[0],function(topicTypes)
-		  	{
-		  		console.log('topic:'+topics[0]);
-			    console.log('types:'+topicTypes);
-			    type = topicTypes;
-			    ros.getMessageDetails(type,function(getMessageDetails)
-			    {
-			    	console.log('details:'+getMessageDetails);
-			    	def = getMessageDetails;
-			    	typedef = ros.decodeTypeDefs(def)
-			    	console.log('def:'+typedef);
-			    	console.log('def_sources:'+ def.toSource());
-			    	console.log('typedef_sources:'+ typedef.toSource());
-		    	});
-		  	});
-		}); 
-
-		ros.getServices(function(services) 
-		{
-			console.log('services:'+services);
-		  	converse('services disponible:<br>'+services);
-		});
-
-	}
-
-</script>
-
-
-
-
-<script>
-
-	//Formulaire dynamique
-
-	var topicPublisher = new Array;
-	topicPublisher[0] = "Topic name to publish";
-	topicPublisher[1] = "Type message";
-	topicPublisher[2] = "Message";
-	
-	var topicSubscriber = new Array;
-	topicSubscriber[0] = "Topic name to subscribe";
-	topicSubscriber[1] = "Type message";
-	topicSubscriber[2] = "Nothing here";
-
-	var serviceCall = new Array;
-	serviceCall[0] = "Name of service";
-	serviceCall[1] = "Type of service";
-	serviceCall[2] = "Parameters";
-
-	
-
-	var action="";
-
-	function Lien_action() 
-	{
-		document.getElementById("echange1").className = "";
-		document.getElementById("echange2").className = "";
-		document.getElementById("echange1").removeAttribute("autocomplete");
-		document.getElementById("echange2").removeAttribute("autocomplete");
-		removeAC("echange1");
-		i = document.getElementById("Liste").selectedIndex;
-		if (i == 0)
-		{
-			document.getElementById("echange1").placeholder = '';
-			document.getElementById("echange2").placeholder = '';
-			document.getElementById("echange3").placeholder = '';
-		}
-		else if(i == 4)
-		{
-			action=document.getElementById("Liste").options[i].value;
-			console.log(action);
-
-		}
-		else
-		{
-			action=document.getElementById("Liste").options[i].value;
-			console.log(action);
-			document.getElementById("echange1").placeholder = window[document.getElementById("Liste").options[i].value][0];
-			document.getElementById("echange2").placeholder = window[document.getElementById("Liste").options[i].value][1];
-			document.getElementById("echange3").placeholder = window[document.getElementById("Liste").options[i].value][2];
-			if(i==1 || i == 2)
-			{
-				ros.getTopics(function(topics)
-				{
-					document.getElementById("echange1").className = "ui-autocomplete-input";
-					autoComplete('echange1',topics);
-				});	
-			}
-
-		}	
-	}
-
-</script>
-
-<script>
-	function autoComplete(inputId,array)
-	{
-		jQuery(function ($)
-		{
-			var id = "#"+inputId;
-			$( id ).autocomplete({source:array});
-		});
-	}	
-	
-	function removeAC(inputId)
-	{
-		jQuery(function ($)
-		{
-			var id = "#"+inputId;
-			var vide = new Array;
-			$( id ).autocomplete({source: vide});
-		});
-	}
-</script>
-
+$(document).ready(function() {
+    $("#Gtabs").tabs();
+});
+</script>    
 
 </head>
-<body> 
+<body onload="Liste.options[0].selected = true;"> 
 
-  	<fieldset>
-		<legend>Connection</legend>
-		<form action="#" method="post">
-	 	<input type="text" id="ip" value="127.0.0.1:9090" size="10">
-	  	<button onclick="connect();" type="button" id="connecter" value="connecter">Connection</button>
+  	<header style="margin-top: 0px; margin-bottom: 10px;">  <!-- options disponibles en permanences-->
+		<form method="post" action="#">
+	 	<input type="text" size="10" value="127.0.0.1:9090" id="ip">
+	  	<button value="connecter" id="connecter" type="button" onclick="connect();">Connection</button>
 	</form>
- 	</fieldset>
-  
-  	<fieldset>
-	 
-	 	<legend>Echange</legend>
-	  	<fieldset style="height:150px; overflow-y: scroll;" >
-			<legend> Conversation </legend>
-			<div id="conversation"></div>
-	  	</fieldset>
-	  
-	  <form name="echange" action="#" method="post">
-		
-		<SELECT id="Liste" onChange="Lien_action()">
-		<option value="" selected>Choisir une Action
-		<option value="topicPublisher">Publish a topic
-		<option value="topicSubscriber">Subscribe to a topic
-		<option value="serviceCall">Call a service
-		<option value="test">Test
-		</SELECT>
-		<br>
-		<div class="ui-widget">
-			<input type="text" id="echange1" value="" placeholder="" size="15">
-			<br>
-			<input type="text" id="echange2" value="" placeholder="" size="15">
-			<br>
-			<br>	
+ 	</header>
+ 	<div id="container">
+ 		<!--ongelts generaux-->
+ 		<div id="Gtabs">
+ 			<ul> 
+		       <li><a href="#Gtabs-1">test 1</a></li>
+		       <li><a href="#Gtabs-2">test 2</a></li>
+		    </ul>
+		    <div id="Gtabs-2">
+				<h1>test 2</h1>
+			</div>
+		  	<div id="Gtabs-1">
+		  		<h1>test 1</h1>
+		  	</div>
+ 		</div>
+ 			
+ 		<!-- onglets robot -->
+	  	<div id="Rtabs">
+		    <ul> 
+		       <li><a href="#Rtabs-1">Robot 1</a></li>
+		       <li><a href="#Rtabs-2">Robot 2</a></li>
+		    </ul>
+		    <div id="Rtabs-2">
+				<h1>test</h1>
+			</div>
+		  	<div id="Rtabs-1">
+			 
+			 	<legend>Echange</legend>
+			  	<fieldset style="height:150px; overflow-y: scroll;" >
+					<legend> Conversation </legend>
+					<div id="conversation"></div>
+			  	</fieldset>
+			  
+			  <form name="echange" action="#" method="post">
+				
+				<SELECT id="Liste" onChange="Lien_action()">
+				<option value="" selected="selected">Choisir une Action
+				<option value="topicPublisher">Publish a topic
+				<option value="topicSubscriber">Subscribe to a topic
+				<option value="serviceCall">Call a service
+				
+				<option value="test">Test
+				<option value="paramSetGet">Set and get Param
+				</SELECT>
+				<br>
+				<div class="ui-widget">
+					<input type="text" id="echange1" value="" placeholder="" size="25">
+					<br>
+					<input type="text" id="echange2" value="" placeholder="" size="25">
+					<br>
+					<br>	
+				</div>
+				<!--
+				<textarea name="message" id="echange3" rows=4 cols=40></textarea>-->
+				<br>
+				<button onclick="lecture();" type="button" id="envoyer" value="envoyer" title="Envoyer">Envoyer</button>
+				<button onclick="function_test();" type="button" id="test" value="test" title="Test">Test</button>
+			  </form>
+			  <fieldset>
+			  	<legend>Formulaire interactif</legend>
+			  	<form id="echange_interactif" name="echange_interactif" action="#" method="post">
+			  	</form>
+			  </fieldset>
+			</div>
 		</div>
-		<textarea name="message" id="echange3" rows=4 cols=40></textarea>
-		<br>
-		<button onclick="lecture();" type="button" id="envoyer" value="envoyer" title="Envoyer">Envoyer</button>
-		<button onclick="function_test();" type="button" id="test" value="test" title="Test">Test</button>
-	  </form>
-	  <fieldset>
-	  	<legend>Formulaire interactif</legend>
-	  	<form id="echange_interactif" name="echange_interactif" action="#" method="post">
-	  	</form>
-	  </fieldset>
-
-	  	
-	
-
-	</fieldset>
+ 	</div> 	
 </body>
 </html>

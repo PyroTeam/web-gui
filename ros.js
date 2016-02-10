@@ -1,4 +1,3 @@
-
 // Connecting to ROS
 // -----------------
 
@@ -11,13 +10,13 @@ function strtok(src, delim)
 }
 
 
-	function connect()
-	{
+function connect()
+{
 	var ip = document.getElementById('ip').value;
 
 	console.log('ip=' + ip);
 	converse('ip=' + ip);
-		if(status == "closed")
+		if(status == "Closed")
 		{
 			ros = new ROSLIB.Ros 
 			({ 
@@ -26,13 +25,13 @@ function strtok(src, delim)
 			ros.on('connection', function() 
 			{
 			console.log('Connected to websocket server.');
-			status='connected';
+			status='Connected';
 			converse(status);
 	  		});
 
 	  		ros.on('error', function(error) {
 			console.log('Error connecting to websocket server: ', error);
-			converse(status);
+			converse("Error");
 	  		});
 
 	  		ros.on('close', function() {
@@ -143,70 +142,182 @@ function subscriber(TopicName, MessageType)
 	});
 }
 
-  /*var listener = new ROSLIB.Topic({
+	/*var listener = new ROSLIB.Topic({
 	ros : ros,
 	name : '/listener',
 	messageType : 'std_msgs/String'
-  });
+	});
 
-  listener.subscribe(function(message) {
+	listener.subscribe(function(message) {
 	console.log('Received message on ' + listener.name + ': ' + message.data);
 	listener.unsubscribe();
-  });*/
+	});*/
 
-  // Calling a service
-  // -----------------
+	// Calling a service
+	// -----------------
 
-  /*var addTwoIntsClient = new ROSLIB.Service({
+	function getSrvRequestDetails(srvType,callback)
+	{
+		var serviceRequestInfo = new ROSLIB.Service(
+		{
+			ros : ros,
+			name : '/rosapi/service_request_details',
+			type : 'rosapi/ServiceRequestDetails'
+		});
+
+		var request = new ROSLIB.ServiceRequest(
+		{
+			type : srvType
+		});
+
+		serviceRequestInfo.callService(request, function(result)
+		{
+			console.log(result);
+			console.log(result.typedefs)
+			if (typeof callback === 'function') 
+			{
+				callback(result.typedefs);
+			};
+		});
+
+	}
+
+	function getSrvResponseDetails(srvType,callback)
+	{
+		var serviceResponseInfo = new ROSLIB.Service(
+		{
+			ros : ros,
+			name : '/rosapi/service_response_details',
+			type : 'rosapi/ServiceResponseDetails'
+		});
+
+		var request = new ROSLIB.ServiceRequest(
+		{
+			type : srvType
+		});
+
+		serviceResponseInfo.callService(request, function(result)
+		{
+			callback(result.typedefs);
+		});
+
+	}
+
+	function callSrv(srvName,srvType,srvRequest)
+	{
+		var service = new ROSLIB.Service(
+		{
+			ros : ros,
+			name : srvName,
+			type : srvType
+		});
+		
+		service.callService(srvRequest, function(result)
+		{
+			getSrvResponseDetails(type,function(response)
+			{
+				var typedef = ros.decodeTypeDefs(response);
+				console.log(result);
+				genFromObject(result);
+			});
+		});
+	}
+
+	/*var addTwoIntsClient = new ROSLIB.Service({
 	ros : ros,
 	name : '/add_two_ints',
 	serviceType : 'rospy_tutorials/AddTwoInts'
-  });
+	});
 
-  var request = new ROSLIB.ServiceRequest({
+	var request = new ROSLIB.ServiceRequest({
 	a : 1,
 	b : 2
-  });
+	});
 
-  addTwoIntsClient.callService(request, function(result) {
+	addTwoIntsClient.callService(request, function(result) {
 	console.log('Result for service call on '
 	  + addTwoIntsClient.name
 	  + ': '
-	  + result.sum);function init()
-  {
+	  + result.sum);
+	});*/
 
-	var ros = new ROSLIB.Ros({
-		url : 'ws://localhost:9090'
-	  });
+	function createParam(paramName,value)
+	{
+		var param = new ROSLIB.Param(
+		{
+			ros : ros,
+			name : paramName
+		});
+		if(value !== undefined && value !="")
+		{
+			param.set(value);
+			converse("création de "+paramName);
+		}
+		return param;
+	}
 
-	  ros.on('connection', function() {
-		console.log('Connected to websocket server.');
-	  });
+	function setParam(paramName,value)
+	{
+		var paramsClient = new ROSLIB.Service({
+			ros : ros,
+			name : '/rosapi/set_param',
+			serviceType : 'rosapi/SetParam'
+		});
 
-	  ros.on('error', function(error) {
-		console.log('Error connecting to websocket server: ', error);
-	  });
+		var request = new ROSLIB.ServiceRequest(
+		{
+			name : paramName,
+			value : value
+		});
 
-	  ros.on('close', function() {
-		console.log('Connection to websocket server closed.');
-	  });
 
-  }
-  });
+	 	paramsClient.callService(request);
+		converse("mise à jour de "+paramName+" à "+value);
 
-  // Getting and setting a param value
-  // ---------------------------------
+	}
 
-  ros.getParams(function(params) {
+	function getParam(paramName) 
+	{
+		var paramsClient = new ROSLIB.Service({
+			ros : ros,
+			name : '/rosapi/get_param',
+			serviceType : 'rosapi/GetParam'
+
+		});
+
+		var request = new ROSLIB.ServiceRequest(
+		{
+			name : paramName
+		});
+
+
+	 	paramsClient.callService(request, function(result) 
+	 	{
+	    	converse("value of "+paramName+" : "+result.value);
+	    	paramValue=result.value;
+	 	});
+
+	}
+
+	function test()
+	{
+
+
+	}
+	
+	// Getting and setting a param value
+	// ---------------------------------
+	/*
+	ros.getParams(function(params) {
 	console.log(params);
-  });
+	});
 
-  var maxVelX = new ROSLIB.Param({
+	var maxVelX = new ROSLIB.Param({
 	ros : ros,
 	name : 'max_vel_y'
-  });
+	});
 
-  maxVelX.set(0.8);
-  maxVelX.get(function(value) {
+	maxVelX.set(0.8);
+	maxVelX.get(function(value) {
 	console.log('MAX VAL: ' + value);
-  });*/
+	});*/
