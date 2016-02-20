@@ -218,6 +218,7 @@ function subscriber(TopicName, MessageType)
 			{
 				var typedef = ros.decodeTypeDefs(response);
 				console.log(result);
+				console.log(typedef);
 				genFromObject(result);
 			});
 		});

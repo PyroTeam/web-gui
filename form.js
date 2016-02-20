@@ -1,8 +1,9 @@
 //lecture du formulaire
-
+var id_echange_interactif = 0;
 var ros ='';
 var status ='Closed';
 
+//publie un message dans le chat
 function converse(message)
 {
   var maj = document.getElementById("conversation").innerHTML;
@@ -10,59 +11,68 @@ function converse(message)
   document.getElementById("conversation").innerHTML = maj;
 }
 
-function genFromForm()
+//rempli un objet défini mais vide à partir d'un formulaire
+function genFromForm(typedef)  
 {
+	var navigateur = new Array;
 	var i = 1,j = 0;
 	var floatType = ["float64","float32"];
 	var intType = ["uint8","uint16","uint32","uint64"];
-	if (document.getElementById(i).innerHTML == '' && i == 1)
+	if (document.getElementById(i).innerHTML == '' && i == 1) //seulement une ligne d'input
+	{
+		while (document.getElementById(i) != null)
 		{
-			while (document.getElementById(i) != null)
+			if ((document.getElementById(i).placeholder.indexOf("float") >= 0) && floatType.indexOf(document.getElementById(i).placeholder) != -1)
+				typedef[document.getElementById(i).name]=parseFloat(document.getElementById(i).value);
+			if ((document.getElementById(i).placeholder.indexOf("int") >= 0) && intType.indexOf(document.getElementById(i).placeholder) != -1)
+				typedef[document.getElementById(i).name]=parseInt(document.getElementById(i).value);
+			if (document.getElementById(i).placeholder == "string")
+				typedef[document.getElementById(i).name]=document.getElementById(i).value.toString();
+			i++
+		}
+	}
+	else //objet complexe
+	{
+		while (document.getElementById(i) != null)
+		{
+			
+			if  (document.getElementById(i).innerHTML != '') 
+			{
+				if (i != 1)
+					j++;
+				navigateur[j] = document.getElementById(i).innerHTML;
+			}
+			else
 			{
 				if ((document.getElementById(i).placeholder.indexOf("float") >= 0) && floatType.indexOf(document.getElementById(i).placeholder) != -1)
-					typedef[document.getElementById(i).name]=parseFloat(document.getElementById(i).value);
+					typedef[navigateur[j]][document.getElementById(i).name]=parseFloat(document.getElementById(i).value);
 				if ((document.getElementById(i).placeholder.indexOf("int") >= 0) && intType.indexOf(document.getElementById(i).placeholder) != -1)
-					typedef[document.getElementById(i).name]=parseInt(document.getElementById(i).value);
+					typedef[navigateur[j]][document.getElementById(i).name]=parseInt(document.getElementById(i).value);
 				if (document.getElementById(i).placeholder == "string")
-					typedef[document.getElementById(i).name]=document.getElementById(i).value.toString();
-				i++
+					typedef[navigateur[j]][document.getElementById(i).name]=document.getElementById(i).value.toString();
 			}
+			i++;
 		}
-		else
-		{
-			while (document.getElementById(i) != null)
-			{
-				
-				if  (document.getElementById(i).innerHTML != '') 
-				{
-					if (i != 1)
-						j++;
-					navigateur[j] = document.getElementById(i).innerHTML;
+	}
 
-				}
-				else
-				{
-					if (floatType.indexOf(document.getElementById(i).placeholder) != -1)
-						typedef[document.getElementById(i).name]=parseFloat(document.getElementById(i).value);
-					if (intType.indexOf(document.getElementById(i).placeholder) != -1)
-						typedef[document.getElementById(i).name]=parseInt(document.getElementById(i).value);
-					if (document.getElementById(i).placeholder == "string")
-						typedef[document.getElementById(i).name]=document.getElementById(i).value.toString();
-				}
-				i++;
-			}
-		}
+	return typedef;
+	
+	
 }
 
-function genFromObject(object)
+//lis un objet complexe et l'affiche via converse
+function genFromObject(object) 
 {
+	console.log("gen"+object);
+	console.log("gen value"+object.value);
+	console.log("gen string"+toString(object));
 	for (var key in object) 
 	{
 		if (typeof object[key] === 'object')
 		{
-			//converse("name:"+key+" typeof:"+typeof object[key]);
-			//converse(key+"\n");
-			recursive_key(object[key],iteration++,'');
+			converse("name:"+key+" typeof:"+typeof object[key]);
+			converse(key+"\n");
+			genFromObject(object[key]);
 		}
 		else 
 		{
@@ -72,20 +82,14 @@ function genFromObject(object)
 	}
 }
 
+//est appelé par le bouton confirmer du formulaire interactif
 function conf(ech1)
 {
-	var navigateur = new Array;
-	
-	
-	//navigateur[1] = document.getElementById('2').name;
-	//var test_def = typedef[navigateur[0]];
-	console.log('wait');
-
 	if (action == "topicPublisher")
 	{
 		var type = document.getElementById('0').innerHTML;
-		var i = 1,j = 0;
-		genFromForm();
+		//var i = 1,j = 0;
+		typedef = genFromForm(typedef);
 		
 		var message = new ROSLIB.Message;
 		message = typedef;
@@ -98,7 +102,10 @@ function conf(ech1)
 		{
 			
 			var type = document.getElementById('0').innerHTML;
-			genFromForm();
+			if(document.getElementById('1') != null)  
+			{
+				typedef = genFromForm(typedef); //verifier l'existence d'1 input
+			}
 			var request = new ROSLIB.ServiceRequest;
 			request = typedef;
 			callSrv(ech1,type,request);
@@ -106,8 +113,8 @@ function conf(ech1)
 	};
 }
 
-var id_echange_interactif = 0;
 
+//génère un formulaire interactif à partir d'un object 
 function recursive_key(object, iteration,formulaire)
 {
 	if (formulaire != '')
@@ -138,110 +145,127 @@ function recursive_key(object, iteration,formulaire)
 
 
 
+function A_topicPublisher(ech1,ech2)
+{
+	converse(ech1);
+	ros.getTopicType(ech1,function(topicTypes)
+	{
+		type = topicTypes;
+		ros.getMessageDetails(type,function(getMessageDetails)
+		{
+			def = getMessageDetails;
+			typedef = ros.decodeTypeDefs(def);
+			document.getElementById('echange_interactif').innerHTML = "";
+			recursive_key(typedef,0,type);
+			document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
+			id_echange_interactif = 0;
+			
+		});
+	});
+}
+
+function A_topicSubscriber(ech1,ech2)
+{
+	ros.getTopicType(ech1,function(topicTypes)
+	{
+		type = topicTypes;
+		subscriber(ech1,type);
+	});
+}
+
+function A_serviceCall(ech1,ech2)
+{
+	converse(ech1);
+	ros.getServiceType(ech1,function(serviceTypes)
+	{
+		type = serviceTypes;
+		getSrvRequestDetails(type,function(getSrvRequestDetails)
+		{
+			req = getSrvRequestDetails
+			typedef = ros.decodeTypeDefs(req);
+			document.getElementById('echange_interactif').innerHTML = "";
+			recursive_key(typedef,0,type);
+			document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
+			id_echange_interactif = 0;
+		});
+	});
+}
+
+function A_paramSetGet(ech1,ech2)
+{
+	ros.getParams(function(params)
+	{
+		if (ech1 !== undefined && ech1!="")
+		{
+			if (params.indexOf(ech1) == -1)
+			{
+				var param = createParam(ech1,ech2);
+			}
+			else if (ech2 !== undefined && ech2 !="")
+			{
+				setParam(ech1,ech2);
+			}
+			else
+			{
+				var paramValue;
+				getParam(ech1);
+			}
+		}
+			
+	});				
+}
+
+function A_test(ech1,ech2)
+{
+	ros.getTopicType(ech1,function(topicTypes)
+	{
+		type = topicTypes;
+		ros.getMessageDetails(type,function(getMessageDetails)
+		{
+			def = getMessageDetails;
+			typedef = ros.decodeTypeDefs(def);
+			document.getElementById('echange_interactif').innerHTML = "";
+			recursive_key(typedef,0,type);
+			id_echange_interactif = 0;
+		});
+	});
+}
+
+//Est appelé par bouton envoyer pour rediriger vers la fonction correspondante, avec les valeurs des champs
 function lecture()
 {
 	var ech1 = document.getElementById('echange1').value;
 	var ech2 = document.getElementById('echange2').value;
-	//var ech3 = document.getElementById('echange3').value;
 	console.log('lecture '+action);
-	if (action == "test")
-	{
-		//converse(ech3);
-		ros.getTopicType(ech3,function(topicTypes)
-		{
-			//converse('types:'+topicTypes+'<br>');
-			type = topicTypes;
-			ros.getMessageDetails(type,function(getMessageDetails)
-			{
-				def = getMessageDetails;
-				typedef = ros.decodeTypeDefs(def);
-				document.getElementById('echange_interactif').innerHTML = "";
-				recursive_key(typedef,0,type);
-				id_echange_interactif = 0;
-			});
-		});
-		
-	}
-	if (action == "topicPublisher")
-	{
-		converse(ech1);
-		ros.getTopicType(ech1,function(topicTypes)
-		{
-			type = topicTypes;
-			ros.getMessageDetails(type,function(getMessageDetails)
-			{
-				def = getMessageDetails;
-				typedef = ros.decodeTypeDefs(def);
-				document.getElementById('echange_interactif').innerHTML = "";
-				recursive_key(typedef,0,type);
-				document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
-				id_echange_interactif = 0;
-				
-			});
-		});
-		
-		
-	}
-
-	if (action == "topicSubscriber")
-	{
-		ros.getTopicType(ech1,function(topicTypes)
-		{
-			type = topicTypes;
-			subscriber(ech1,type);
-		});
-	}
-
-	if (action == "serviceCall")
-	{
-		converse(ech1);
-		ros.getServiceType(ech1,function(serviceTypes)
-		{
-			type = serviceTypes;
-			getSrvRequestDetails(type,function(getSrvRequestDetails)
-			{
-				req = getSrvRequestDetails
-				typedef = ros.decodeTypeDefs(req);
-				document.getElementById('echange_interactif').innerHTML = "";
-				recursive_key(typedef,0,type);
-				document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
-				id_echange_interactif = 0;
-			});
-		});
-
-	}
-
-	if (action == "paramSetGet")
-	{
-		ros.getParams(function(params)
-		{
-			if (ech1 !== undefined && ech1!="")
-			{
-				if (params.indexOf(ech1) == -1)
-				{
-					var param = createParam(ech1,ech2);
-				}
-				else if (ech2 !== undefined && ech2 !="")
-				{
-					setParam(ech1,ech2);
-				}
-				else
-				{
-					var paramValue;
-					getParam(ech1);
-				}
-			}
-				
-		})				
-
-	}
 	
+	switch(action)
+	{
+		case "test":
+		A_test(ech1,ech2);
+		break;
+
+		case "topicPublisher":
+		A_topicPublisher(ech1,ech2);
+		break;
+
+		case "topicSubscriber":
+		A_topicSubscriber(ech1,ech2);
+		break;
+
+		case "serviceCall":
+		A_serviceCall(ech1,ech2);
+		break;
+
+		case "paramSetGet":
+		A_paramSetGet(ech1,ech2);
+		break;
+
+		default:
+		converse("erreur action : "+action+" inconnue");
+		break;
+	}	
 }	
 
-function function_test()
-{
-	test();
-}
 
 
 
@@ -269,6 +293,7 @@ paramSetGet[1] = "If setting, value";
 
 var action="";
 
+//modifie les placeholder et les autocomplete selon les cas
 function Lien_action() 
 {
 	document.getElementById("echange1").className = "";
@@ -283,7 +308,7 @@ function Lien_action()
 		document.getElementById("echange2").placeholder = '';
 		//document.getElementById("echange3").placeholder = '';
 	}
-	else if (i == 4)
+	else if (i == 5)
 	{
 		action=document.getElementById("Liste").options[i].value;
 		console.log(action);
@@ -312,7 +337,7 @@ function Lien_action()
 				autoComplete('echange1',services);
 			})
 		}
-		if (i==5) 
+		if (i==4) 
 		{
 			ros.getParams(function(params)
 			{
