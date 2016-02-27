@@ -131,6 +131,7 @@ function subscriber(TopicName, MessageType)
 	topic.subscribe(function(message) 
 	{
 	  	console.log('received message on ' + topic.name + ': ' + message);
+	  	console.log(message);
 	  	var data='';
 	  	for (var key in message) 
 	  	{

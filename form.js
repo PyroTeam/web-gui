@@ -2,16 +2,30 @@
 var id_echange_interactif = 0;
 var ros ='';
 var status ='Closed';
+var ech1='',ech2='';
+
+var form='';
+var element = '<fieldset><legend>Formulaire interactif</legend> <form name="echange_interactif" action="#" method="post">';
+
+
+var requestedBytes = 1024*1024; 
+
+/*navigator.webkitStorageInfo.requestQuota (
+    PERSISTENT, requestedBytes, function(grantedBytes) {  
+        window.requestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandler); 
+
+    }, function(e) { console.log('Error', e); }
+);*/
 
 //publie un message dans le chat
-function converse(message)
+function converse(message) 
 {
-  var maj = document.getElementById("conversation").innerHTML;
-  maj += '<br>' + message;
-  document.getElementById("conversation").innerHTML = maj;
-}
+	var maj = document.getElementById("conversation").innerHTML;
+	maj += '<br>' + message;
+	document.getElementById("conversation").innerHTML = maj;
+} 
 
-//rempli un objet défini mais vide à partir d'un formulaire
+// rempli un objet défini mais vide à partir d'un formulaire
 function genFromForm(typedef)  
 {
 	var navigateur = new Array;
@@ -54,10 +68,7 @@ function genFromForm(typedef)
 			i++;
 		}
 	}
-
-	return typedef;
-	
-	
+	return typedef;	
 }
 
 //lis un objet complexe et l'affiche via converse
@@ -113,14 +124,14 @@ function conf(ech1)
 	};
 }
 
-
 //génère un formulaire interactif à partir d'un object 
 function recursive_key(object, iteration,formulaire)
 {
 	if (formulaire != '')
 	{
 		formulaire = "<p id='"+id_echange_interactif+"'>"+formulaire+"</p>";
-		document.getElementById('echange_interactif').innerHTML = formulaire;
+		//document.getElementById('echange_interactif').innerHTML = formulaire;
+		form = formulaire;
 	}
 	for (var key in object) 
 	{
@@ -131,20 +142,22 @@ function recursive_key(object, iteration,formulaire)
 		{
 			//converse("name:"+key+" typeof:"+typeof object[key]);
 			formulaire = "<p id='"+id_echange_interactif+"'>"+key+"</p>";
-			document.getElementById('echange_interactif').innerHTML += formulaire;
+			//document.getElementById('echange_interactif').innerHTML += formulaire;
+			form += formulaire;
 			recursive_key(object[key],iteration++,'');
 		}
 		else 
 		{
 			//converse("name:"+key+" name:"+object[key]+" iteration:"+iteration);
 			formulaire = key+" <input type=\"text\" id='"+id_echange_interactif+"'name=\""+key+"\" value=\"\" placeholder=\""+object[key]+"\"size=\"15\">";
-			document.getElementById('echange_interactif').innerHTML += formulaire;
+			form += formulaire;
+			//document.getElementById('echange_interactif').innerHTML += formulaire;
 		}
 	}
 }
 
 
-
+//A_ => action
 function A_topicPublisher(ech1,ech2)
 {
 	converse(ech1);
@@ -155,9 +168,12 @@ function A_topicPublisher(ech1,ech2)
 		{
 			def = getMessageDetails;
 			typedef = ros.decodeTypeDefs(def);
-			document.getElementById('echange_interactif').innerHTML = "";
+			form='';
+			//document.getElementById('echange_interactif').innerHTML = "";
 			recursive_key(typedef,0,type);
-			document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
+			$('#echange_interactif').empty();
+			$('#echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
+			//document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
 			id_echange_interactif = 0;
 			
 		});
@@ -183,9 +199,12 @@ function A_serviceCall(ech1,ech2)
 		{
 			req = getSrvRequestDetails
 			typedef = ros.decodeTypeDefs(req);
-			document.getElementById('echange_interactif').innerHTML = "";
+			//document.getElementById('echange_interactif').innerHTML = "";
+			form='';
 			recursive_key(typedef,0,type);
-			document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
+			$('#echange_interactif').empty();
+			$('#echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
+			//document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
 			id_echange_interactif = 0;
 		});
 	});
@@ -234,8 +253,8 @@ function A_test(ech1,ech2)
 //Est appelé par bouton envoyer pour rediriger vers la fonction correspondante, avec les valeurs des champs
 function lecture()
 {
-	var ech1 = document.getElementById('echange1').value;
-	var ech2 = document.getElementById('echange2').value;
+	ech1 = document.getElementById('echange1').value;
+	ech2 = document.getElementById('echange2').value;
 	console.log('lecture '+action);
 	
 	switch(action)
