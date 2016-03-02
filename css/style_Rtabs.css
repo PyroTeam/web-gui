@@ -1,0 +1,85 @@
+#Rtabs ul {
+    padding: 0;
+    float: left;
+    list-style: none;
+    height: 30px;
+    border-bottom: 1px solid #666;
+    border-left: 1px solid #666;
+    width: 100%;
+}
+#Rtabs ul li {
+   float: left;
+   margin: 0;
+   padding: 0;
+   height: 29px;
+   line-height: 29px;
+   border-left: none;
+   margin-bottom: -1px;
+   overflow: hidden;
+   position: relative;
+   background: #ddd
+}
+#Rtabs ul li a {
+   text-decoration: none;
+   color: #888;
+   display: block;
+   font-family: "Trebuchet MS";
+   font-size: 14px;
+   padding: 0 20px
+}
+#Rtabs ul li a:hover {
+   background: #ccc;
+   color: #666
+}
+
+.ui-Rtabs {
+   position: relative
+}
+.ui-Rtabs .ui-Rtabs-nav {
+   margin: 0
+}
+.ui-Rtabs .ui-Rtabs-nav li {
+   float: left;
+   margin: 0;
+   padding: 0;
+   border: 1px solid #ccc;
+   border-left: none;
+   margin-bottom: -1px;
+   overflow: hidden;
+   position: relative;
+   background: #ddd
+}
+.ui-Rtabs .ui-Rtabs-nav .ui-Rtabs-anchor {
+   float: left;
+   padding: 0;
+   text-decoration: none;
+   padding: 0 10px
+}
+.ui-Rtabs .ui-Rtabs-nav li.ui-Rtabs-active {
+   margin-bottom: -1px;
+   padding-bottom: 1px;
+   border-bottom: 1px solid #fff
+}
+.ui-Rtabs .ui-Rtabs-nav li.ui-Rtabs-active .ui-Rtabs-anchor,
+.ui-Rtabs .ui-Rtabs-nav li.ui-state-disabled .ui-Rtabs-anchor,
+.ui-Rtabs .ui-Rtabs-nav li.ui-Rtabs-loading .ui-Rtabs-anchor {
+   cursor: text;
+   color: #666;
+   background: #fff
+}
+.ui-Rtabs-collapsible .ui-Rtabs-nav li.ui-Rtabs-active .ui-Rtabs-anchor {
+   cursor: pointer
+}
+
+.ui-Rtabs .ui-Rtabs-panel {
+   display: block;
+   border: 1px solid #ccc;
+   border-top: none;
+   overflow: hidden;
+   clear: both;
+   float: left;
+   width: 98%;
+   background: #fff;
+   margin: 0;
+   padding: 10px
+}

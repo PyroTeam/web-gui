@@ -1,0 +1,85 @@
+#Gtabs ul {
+    padding: 0;
+    float: left;
+    list-style: none;
+    height: 30px;
+    border-bottom: 1px solid #666;
+    border-left: 1px solid #666;
+    width: 100%;
+}
+#Gtabs ul li {
+   float: left;
+   margin: 0;
+   padding: 0;
+   height: 29px;
+   line-height: 29px;
+   border-left: none;
+   margin-bottom: -1px;
+   overflow: hidden;
+   position: relative;
+   background: #ddd
+}
+#Gtabs ul li a {
+   text-decoration: none;
+   color: #888;
+   display: block;
+   font-family: "Trebuchet MS";
+   font-size: 14px;
+   padding: 0 20px
+}
+#Gtabs ul li a:hover {
+   background: #ccc;
+   color: #666
+}
+
+.ui-Gtabs {
+   position: relative
+}
+.ui-Gtabs .ui-Gtabs-nav {
+   margin: 0
+}
+.ui-Gtabs .ui-Gtabs-nav li {
+   float: left;
+   margin: 0;
+   padding: 0;
+   border: 1px solid #ccc;
+   border-left: none;
+   margin-bottom: -1px;
+   overflow: hidden;
+   position: relative;
+   background: #ddd
+}
+.ui-Gtabs .ui-Gtabs-nav .ui-Gtabs-anchor {
+   float: left;
+   padding: 0;
+   text-decoration: none;
+   padding: 0 10px
+}
+.ui-Gtabs .ui-Gtabs-nav li.ui-Gtabs-active {
+   margin-bottom: -1px;
+   padding-bottom: 1px;
+   border-bottom: 1px solid #fff
+}
+.ui-Gtabs .ui-Gtabs-nav li.ui-Gtabs-active .ui-Gtabs-anchor,
+.ui-Gtabs .ui-Gtabs-nav li.ui-state-disabled .ui-Gtabs-anchor,
+.ui-Gtabs .ui-Gtabs-nav li.ui-Gtabs-loading .ui-Gtabs-anchor {
+   cursor: text;
+   color: #666;
+   background: #fff
+}
+.ui-Gtabs-collapsible .ui-Gtabs-nav li.ui-Gtabs-active .ui-Gtabs-anchor {
+   cursor: pointer
+}
+
+.ui-Gtabs .ui-Gtabs-panel {
+   display: block;
+   border: 1px solid #ccc;
+   border-top: none;
+   overflow: hidden;
+   clear: both;
+   float: left;
+   width: 98%;
+   background: #fff;
+   margin: 0;
+   padding: 10px
+}
