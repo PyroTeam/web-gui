@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="ros-control-center-master/assets/js/|local/|ros-control-center-master/|ros-control-center-master/app/topics/|**/*.min.js|**/node_modules/*|**/bower_components/*|ros-control-center-master/app/services/|ros-control-center-master/app/settings/|ros-control-center-master/app/|ros-control-center-master/app/control/|ros-control-center-master/app/navbar/|ros-control-center-master/app/parameters/|ros-control-center-master/app/helper/" kind="src" path=""/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="local"/>
+	<classpathentry excluding="app/control/|assets/js/|app/settings/|app/parameters/|app/services/|**/*.min.js|**/node_modules/*|app/topics/|**/bower_components/*|app/|app/helper/|app/navbar/" kind="src" path="ros-control-center-master"/>
+	<classpathentry excluding="services/|parameters/|topics/|helper/|navbar/|**/*.min.js|**/node_modules/*|settings/|control/|**/bower_components/*" kind="src" path="ros-control-center-master/app"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="ros-control-center-master/app/control"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="ros-control-center-master/app/helper"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="ros-control-center-master/app/navbar"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="ros-control-center-master/app/parameters"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="ros-control-center-master/app/services"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="ros-control-center-master/app/settings"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="ros-control-center-master/app/topics"/>
+	<classpathentry excluding="**/*.min.js|**/node_modules/*|**/bower_components/*" kind="src" path="ros-control-center-master/assets/js"/>
+	<classpathentry kind="con" path="org.eclipse.wst.jsdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path=""/>
+</classpath>

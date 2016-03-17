@@ -19,6 +19,9 @@ https://github.com/asyncly/EventEmitter2.git
 
 dans le dossier ou sont stocker les pages js
 -->
+<link type="text/css" rel="stylesheet" href="css/style_Ltabs.css" />
+<link type="text/css" rel="stylesheet" href="css/style_Rtabs.css" />
+<link type="text/css" rel="stylesheet" href="css/style.css" />
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
@@ -31,19 +34,19 @@ dans le dossier ou sont stocker les pages js
 
 <script type="text/javascript" src="ros.js"></script>
 <script type="text/javascript" src="form.js"></script>
-<link type="text/css" rel="stylesheet" href="css/style_Gtabs.css" />
-<link type="text/css" rel="stylesheet" href="css/style_Rtabs.css" />
-<link type="text/css" rel="stylesheet" href="css/style.css" />
+
 	
 <script type="text/javascript">
+
+
 $(document).ready(function() 
 {
-    $("#Rtabs").tabs();
+    $("#Ltabs").tabs();
 });
 
 $(document).ready(function() 
 {
-    $("#Gtabs").tabs();
+    $("#Rtabs").tabs();
 });
 </script>    
 
@@ -53,78 +56,118 @@ $(document).ready(function()
   	<header style="margin-top: 0px; margin-bottom: 10px;">  <!-- options disponibles en permanences-->
 		<form method="post" action="#">
 	 	<input type="text" size="10" value="127.0.0.1:9090" id="ip">
-	  	<button value="connecter" id="connecter" type="button" onclick="connect();">Connection</button>
+	 	<input type="text" size="10" value="robotino" id="name">
+	  	<button value="connecter" id="connecter" type="button" onclick="addRobot(document.getElementById('secure').checked);">Connection</button>
+	  	<input type="checkbox" id="secure">Connexion sécurisée
 	</form>
  	</header>
  	<div id="container">
  		<!--ongelts generaux-->
- 		<div id="Gtabs">
+ 		<div id="Ltabs">
  			<ul> 
-		       <li><a href="#Gtabs-1">test 1</a></li>
-		       <li><a href="#Gtabs-2">test 2</a></li>
+		       <li><a href="#Ltabs-1">test 1</a></li>
+		       <li><a href="#Ltabs-2">test 2</a></li>
 		    </ul>
-		    <div id="Gtabs-2">
+		    <div id="Ltabs-2">
 				<h1>test 2</h1>
 			</div>
-		  	<div id="Gtabs-1">
+		  	<div id="Ltabs-1">
 		  		<h1>test 1</h1>
 		  	</div>
  		</div>
  			
  		<!-- onglets robot -->
-	  	<div id="Rtabs">
-		    <ul> 
-		       <li><a href="#Rtabs-1">Robot 1</a></li>
-		       <li><a href="#Rtabs-2">Robot 2</a></li>
-		    </ul>
-		    <div id="Rtabs-2">
-				<h1>test</h1>
-			</div>
-		  	<div id="Rtabs-1">
-			 
-			 	<legend>Echange</legend>
-			  	<fieldset style="height:150px; overflow-y: scroll;" >
-					<legend> Conversation </legend>
-					<div id="conversation"></div>
-			  	</fieldset>
-			  
-			  <form name="echange" action="#" method="post">
-				
-				<SELECT id="Liste" onChange="Lien_action()">
-				<option value="" selected="selected">Choisir une Action
-				<option value="topicPublisher">Publish a topic
-				<option value="topicSubscriber">Subscribe to a topic
-				<option value="serviceCall">Call a service
-				<option value="paramSetGet">Set and get Param
-				<option value="test">Test
-				
-				</SELECT>
-				<br>
-				<div class="ui-widget">
-					<input type="text" id="echange1" value="" placeholder="" size="25">
+ 		<div id="Rtabs">
+ 		<!--
+		lier un onglet à un bloc
+		mettre en place une gestion d'onglet automatique 
+ 		-->
+ 			<ul> 
+ 				<li><a href="#Rtabs-1">Robot 1</a></li>
+ 				<li><a href="#Rtabs-2">Robot 2</a></li>
+ 				<li><img src="images/plus.jpeg" widht="40px" height="40px" alt="ajout onglet" onclick="addRobot();"/></li>
+ 			</ul>
+ 			<div id="example" style="display: none;">
+ 				<legend>Echange</legend>
+ 				<fieldset style="height:150px; overflow-y: scroll;" >
+ 					<legend> Conversation </legend>
+ 					<div id="conversation"></div>
+ 				</fieldset>
+
+ 				<form name="echange" action="#" method="post">
+
+ 					<SELECT id="Liste" onChange="Lien_action()">
+						<option value="" selected="selected">Choisir une Action
+						<option value="topicPublisher">Publish a topic
+						<option value="topicSubscriber">Subscribe to a topic
+						<option value="serviceCall">Call a service
+						<option value="paramSetGet">Set and get Param
+						<option value="test">Test	
+					</SELECT>
 					<br>
-					<input type="text" id="echange2" value="" placeholder="" size="25">
-					<br>
-					<br>	
-				</div>
+					<div class="ui-widget">
+						<input type="text" id="echange1" value="" placeholder="" size="25">
+						<br>
+						<input type="text" id="echange2" value="" placeholder="" size="25">
+						<br>
+						<br>	
+					</div>
 				<!--
 				<textarea name="message" id="echange3" rows=4 cols=40></textarea>-->
 				<br>
 				<button onclick="lecture();" type="button" id="envoyer" value="envoyer" title="Envoyer">Envoyer</button>
 				<button onclick="function_test();" type="button" id="test" value="test" title="Test">Test</button>
-			  </form>
-			  <div id="echange_interactif">
-			  	<!--
-			  	<fieldset >
-			  		<legend>Formulaire interactif</legend>
-			  		<form id="echange_interactif" name="echange_interactif" action="#" method="post">
-			  		</form>
-			  	</fieldset>
-			  	-->
-			  </div>
-			  
+				</form>
+				<div id="echange_interactif">
+				</div>
+ 			</div>
+ 			<div id="Rtabs-1">
+
+ 				<legend>Echange</legend>
+ 				<fieldset style="height:150px; overflow-y: scroll;" >
+ 					<legend> Conversation </legend>
+ 					<div id="conversation"></div>
+ 				</fieldset>
+
+ 				<form name="echange" action="#" method="post">
+
+ 					<SELECT id="Liste" onChange="Lien_action()">
+						<option value="" selected="selected">Choisir une Action
+						<option value="topicPublisher">Publish a topic
+						<option value="topicSubscriber">Subscribe to a topic
+						<option value="serviceCall">Call a service
+						<option value="paramSetGet">Set and get Param
+						<option value="test">Test	
+					</SELECT>
+					<br>
+					<div class="ui-widget">
+						<input type="text" id="echange1" value="" placeholder="" size="25">
+						<br>
+						<input type="text" id="echange2" value="" placeholder="" size="25">
+						<br>
+						<br>	
+					</div>
+				<!--
+				<textarea name="message" id="echange3" rows=4 cols=40></textarea>-->
+				<br>
+				<button onclick="lecture();" type="button" id="envoyer" value="envoyer" title="Envoyer">Envoyer</button>
+				<button onclick="function_test();" type="button" id="test" value="test" title="Test">Test</button>
+				</form>
+				<div id="echange_interactif">
+				</div>
+				  	<!--
+				  	<fieldset >
+				  		<legend>Formulaire interactif</legend>
+				  		<form id="echange_interactif" name="echange_interactif" action="#" method="post">
+				  		</form>
+				  	</fieldset>
+				  -->
 			</div>
+			<div id="Rtabs-2">
+ 				<h1>test</h1>
+ 			</div>
 		</div>
+	</div>
  	</div> 	
 </body>
 </html>

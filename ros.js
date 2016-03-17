@@ -3,25 +3,29 @@
 
 
 
-function strtok(src, delim)
-{
-	elim_escaped = new RegExp('[' + delim.replace(/[\[\]\(\)\*\+\?\.\\\^\$\|\#\-\{\}\/]/g, "\\$&") + ']', 'g');
-  	return src.replace(delim_escaped, delim[0]).split(delim[0]);
-}
-
-
-function connect()
+function connect(secure)
 {
 	var ip = document.getElementById('ip').value;
 
-	console.log('ip=' + ip);
+	//console.log('ip=' + ip);
 	converse('ip=' + ip);
 		if(status == "Closed")
 		{
-			ros = new ROSLIB.Ros 
-			({ 
-				url : 'ws://'+ip
-			});
+			if(secure == true)
+			{
+				ros = new ROSLIB.Ros 
+				({ 
+					url : 'wss://'+ip
+				});
+			}
+			else 
+			{
+				ros = new ROSLIB.Ros 
+				({ 
+					url : 'ws://'+ip
+				});
+			}
+			
 			ros.on('connection', function() 
 			{
 			console.log('Connected to websocket server.');
@@ -39,17 +43,19 @@ function connect()
 			status="Closed";
 			converse(status);
 	  		});
+	  		return ros;
 		}
 
-	else 
+
+		/*else 
 		{
 			console.log('Already connected');
 			converse('Already connected');
-		}
+		}*/
 
 }
 
-function init()
+/*function init()
 {
 	//ros = a robot
 	ros = new ROSLIB.Ros 
@@ -72,21 +78,21 @@ function init()
 	status="Closed";
 	});
 
-}
+}*/
 
 
 
 // Publishing a Topic
 // ------------------
 
-function publisher(Name, MsgType, Message)
+function publisher(Name, MsgType, Message, Ros)
 {
 	if (ros != '')
 		console.log('ros existe');
 	else console.log("ros n'existe pas");
 	var topic = new ROSLIB.Topic
 	({
-		ros : ros,
+		ros : Ros,
 		name : Name,
 		messageType : MsgType 
 	});
@@ -97,33 +103,13 @@ function publisher(Name, MsgType, Message)
 
 }
 
-  /*var cmdVel = new ROSLIB.Topic({
-	ros : ros,
-	name : '/cmd_vel',
-	messageType : 'geometry_msgs/Twist'
-  });
-
-  var twist = new ROSLIB.Message({
-	linear : {
-	  x : 0.1,
-	  y : 0.2,
-	  z : 0.3
-	},
-	angular : {
-	  x : -0.1,
-	  y : -0.2,
-	  z : -0.3
-	}
-  });
-  cmdVel.publish(twist);*/
-
   // Subscribing to a Topic
   // ----------------------
 
-function subscriber(TopicName, MessageType)
+function subscriber(TopicName, MessageType, Ros)
 {
 	var topic = new ROSLIB.Topic({
-		ros :ros,
+		ros :Ros,
 		name : TopicName,
 		messageType : MessageType
 	});
@@ -143,25 +129,14 @@ function subscriber(TopicName, MessageType)
 	});
 }
 
-	/*var listener = new ROSLIB.Topic({
-	ros : ros,
-	name : '/listener',
-	messageType : 'std_msgs/String'
-	});
-
-	listener.subscribe(function(message) {
-	console.log('Received message on ' + listener.name + ': ' + message.data);
-	listener.unsubscribe();
-	});*/
-
 	// Calling a service
 	// -----------------
 
-	function getSrvRequestDetails(srvType,callback)
+	function getSrvRequestDetails(srvType, callback, Ros)
 	{
 		var serviceRequestInfo = new ROSLIB.Service(
 		{
-			ros : ros,
+			ros : Ros,
 			name : '/rosapi/service_request_details',
 			type : 'rosapi/ServiceRequestDetails'
 		});
@@ -183,11 +158,11 @@ function subscriber(TopicName, MessageType)
 
 	}
 
-	function getSrvResponseDetails(srvType,callback)
+	function getSrvResponseDetails(srvType, callback, Ros)
 	{
 		var serviceResponseInfo = new ROSLIB.Service(
 		{
-			ros : ros,
+			ros : Ros,
 			name : '/rosapi/service_response_details',
 			type : 'rosapi/ServiceResponseDetails'
 		});
@@ -204,11 +179,11 @@ function subscriber(TopicName, MessageType)
 
 	}
 
-	function callSrv(srvName,srvType,srvRequest)
+	function callSrv(srvName,srvType,srvRequest, Ros)
 	{
 		var service = new ROSLIB.Service(
 		{
-			ros : ros,
+			ros : Ros,
 			name : srvName,
 			type : srvType
 		});
@@ -225,29 +200,13 @@ function subscriber(TopicName, MessageType)
 		});
 	}
 
-	/*var addTwoIntsClient = new ROSLIB.Service({
-	ros : ros,
-	name : '/add_two_ints',
-	serviceType : 'rospy_tutorials/AddTwoInts'
-	});
+	//set, get or change a param
 
-	var request = new ROSLIB.ServiceRequest({
-	a : 1,
-	b : 2
-	});
-
-	addTwoIntsClient.callService(request, function(result) {
-	console.log('Result for service call on '
-	  + addTwoIntsClient.name
-	  + ': '
-	  + result.sum);
-	});*/
-
-	function createParam(paramName,value)
+	function createParam(paramName, value, Ros)
 	{
 		var param = new ROSLIB.Param(
 		{
-			ros : ros,
+			ros : Ros,
 			name : paramName
 		});
 		if(value !== undefined && value !="")
@@ -258,10 +217,10 @@ function subscriber(TopicName, MessageType)
 		return param;
 	}
 
-	function setParam(paramName,value)
+	function setParam(paramName, value, Ros)
 	{
 		var paramsClient = new ROSLIB.Service({
-			ros : ros,
+			ros : Ros,
 			name : '/rosapi/set_param',
 			serviceType : 'rosapi/SetParam'
 		});
@@ -278,10 +237,10 @@ function subscriber(TopicName, MessageType)
 
 	}
 
-	function getParam(paramName) 
+	function getParam(paramName, Ros) 
 	{
 		var paramsClient = new ROSLIB.Service({
-			ros : ros,
+			ros : Ros,
 			name : '/rosapi/get_param',
 			serviceType : 'rosapi/GetParam'
 
@@ -306,20 +265,12 @@ function subscriber(TopicName, MessageType)
 
 
 	}
-	
-	// Getting and setting a param value
-	// ---------------------------------
-	/*
-	ros.getParams(function(params) {
-	console.log(params);
-	});
 
-	var maxVelX = new ROSLIB.Param({
-	ros : ros,
-	name : 'max_vel_y'
-	});
 
-	maxVelX.set(0.8);
-	maxVelX.get(function(value) {
-	console.log('MAX VAL: ' + value);
-	});*/
+
+
+function strtok(src, delim)
+{
+	elim_escaped = new RegExp('[' + delim.replace(/[\[\]\(\)\*\+\?\.\\\^\$\|\#\-\{\}\/]/g, "\\$&") + ']', 'g');
+  	return src.replace(delim_escaped, delim[0]).split(delim[0]);
+}

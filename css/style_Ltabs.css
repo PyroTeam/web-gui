@@ -1,4 +1,4 @@
-#Gtabs ul {
+#Ltabs ul {
     padding: 0;
     float: left;
     list-style: none;
@@ -7,7 +7,7 @@
     border-left: 1px solid #666;
     width: 100%;
 }
-#Gtabs ul li {
+#Ltabs ul li {
    float: left;
    margin: 0;
    padding: 0;
@@ -19,7 +19,7 @@
    position: relative;
    background: #ddd
 }
-#Gtabs ul li a {
+#Ltabs ul li a {
    text-decoration: none;
    color: #888;
    display: block;
@@ -27,18 +27,18 @@
    font-size: 14px;
    padding: 0 20px
 }
-#Gtabs ul li a:hover {
+#Ltabs ul li a:hover {
    background: #ccc;
    color: #666
 }
 
-.ui-Gtabs {
+.ui-Ltabs {
    position: relative
 }
-.ui-Gtabs .ui-Gtabs-nav {
+.ui-Ltabs .ui-Ltabs-nav {
    margin: 0
 }
-.ui-Gtabs .ui-Gtabs-nav li {
+.ui-Ltabs .ui-Ltabs-nav li {
    float: left;
    margin: 0;
    padding: 0;
@@ -49,29 +49,29 @@
    position: relative;
    background: #ddd
 }
-.ui-Gtabs .ui-Gtabs-nav .ui-Gtabs-anchor {
+.ui-Ltabs .ui-Ltabs-nav .ui-Ltabs-anchor {
    float: left;
    padding: 0;
    text-decoration: none;
    padding: 0 10px
 }
-.ui-Gtabs .ui-Gtabs-nav li.ui-Gtabs-active {
+.ui-Ltabs .ui-Ltabs-nav li.ui-Ltabs-active {
    margin-bottom: -1px;
    padding-bottom: 1px;
    border-bottom: 1px solid #fff
 }
-.ui-Gtabs .ui-Gtabs-nav li.ui-Gtabs-active .ui-Gtabs-anchor,
-.ui-Gtabs .ui-Gtabs-nav li.ui-state-disabled .ui-Gtabs-anchor,
-.ui-Gtabs .ui-Gtabs-nav li.ui-Gtabs-loading .ui-Gtabs-anchor {
+.ui-Ltabs .ui-Ltabs-nav li.ui-Ltabs-active .ui-Ltabs-anchor,
+.ui-Ltabs .ui-Ltabs-nav li.ui-state-disabled .ui-Ltabs-anchor,
+.ui-Ltabs .ui-Ltabs-nav li.ui-Ltabs-loading .ui-Ltabs-anchor {
    cursor: text;
    color: #666;
    background: #fff
 }
-.ui-Gtabs-collapsible .ui-Gtabs-nav li.ui-Gtabs-active .ui-Gtabs-anchor {
+.ui-Ltabs-collapsible .ui-Ltabs-nav li.ui-Ltabs-active .ui-Ltabs-anchor {
    cursor: pointer
 }
 
-.ui-Gtabs .ui-Gtabs-panel {
+.ui-Ltabs .ui-Ltabs-panel {
    display: block;
    border: 1px solid #ccc;
    border-top: none;

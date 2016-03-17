@@ -18,6 +18,7 @@ var requestedBytes = 1024*1024;
 );*/
 
 //publie un message dans le chat
+
 function converse(message) 
 {
 	var maj = document.getElementById("conversation").innerHTML;
@@ -387,4 +388,14 @@ function removeAC(inputId)
 		var vide = new Array;
 		$( id ).autocomplete({source: vide});
 	});
+}
+
+function addRobot(secure)
+{
+	var nameRobot = document.getElementById('name').value; 
+	connect(secure);
+	$("#Rtabs ul").append("<li><a href='#Rtabs-"+nameRobot+"'>"+nameRobot+"</a></li>");
+	$("#Rtabs").append("<div id='Rtabs-"+nameRobot+"'><h1>test</h1></div>");
+
+	//window.location.reload();
 }
