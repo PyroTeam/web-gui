@@ -3,11 +3,11 @@
 
 
 
-function connect(secure)
+/*function connect(secure)
 {
 	var ip = document.getElementById('ip').value;
-
-	//console.log('ip=' + ip);
+	var ros;
+	console.log('ip=' + ip);
 	converse('ip=' + ip);
 		if(status == "Closed")
 		{
@@ -24,6 +24,51 @@ function connect(secure)
 				({ 
 					url : 'ws://'+ip
 				});
+			}
+			
+			ros.on('connection', function() 
+			{
+			console.log('Connected to websocket server.');
+			status='Connected';
+			converse(status);
+	  		});
+
+	  		ros.on('error', function(error) {
+			console.log('Error connecting to websocket server: ', error);
+			converse("Error");
+	  		});
+
+	  		ros.on('close', function() {
+			console.log('Connection to websocket server closed.');
+			status="Closed";
+			converse(status);
+	  		});
+	  		return ros;
+		}
+
+
+		/*else 
+		{
+			console.log('Already connected');
+			converse('Already connected');
+		}
+
+}*/
+
+function connect(secure, ros)
+{
+	var ip = document.getElementById('ip').value;
+	console.log('ip=' + ip);
+	converse('ip=' + ip);
+		if(status == "Closed")
+		{
+			if(secure == true)
+			{
+				ros.connect('wss://'+ip);
+			}
+			else 
+			{
+				ros.connect('ws://'+ip); 
 			}
 			
 			ros.on('connection', function() 

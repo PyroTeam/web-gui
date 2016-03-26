@@ -1,14 +1,20 @@
 //lecture du formulaire
 var id_echange_interactif = 0;
-var ros ='';
+//var ros ='';
 var status ='Closed';
 var ech1='',ech2='';
 
 var form='';
 var element = '<fieldset><legend>Formulaire interactif</legend> <form name="echange_interactif" action="#" method="post">';
 
+var rosArray = new Array;
+var ROSLIBArray = new Array;
 
-var requestedBytes = 1024*1024; 
+/*function ROS(ROSLIB,)
+{
+	this.ROSLIB = ROSLIB;
+	this.ros = ROSLIB.ros;
+}*/
 
 /*navigator.webkitStorageInfo.requestQuota (
     PERSISTENT, requestedBytes, function(grantedBytes) {  
@@ -21,9 +27,11 @@ var requestedBytes = 1024*1024;
 
 function converse(message) 
 {
-	var maj = document.getElementById("conversation").innerHTML;
+	//var maj = document.getElementById("conversation").innerHTML;
+	var maj = $('.tab.active #conversation').html();
 	maj += '<br>' + message;
-	document.getElementById("conversation").innerHTML = maj;
+	//document.getElementById("conversation").innerHTML = maj;
+	$('.tab.active #conversation').html(maj);
 } 
 
 // rempli un objet défini mais vide à partir d'un formulaire
@@ -390,12 +398,3 @@ function removeAC(inputId)
 	});
 }
 
-function addRobot(secure)
-{
-	var nameRobot = document.getElementById('name').value; 
-	connect(secure);
-	$("#Rtabs ul").append("<li><a href='#Rtabs-"+nameRobot+"'>"+nameRobot+"</a></li>");
-	$("#Rtabs").append("<div id='Rtabs-"+nameRobot+"'><h1>test</h1></div>");
-
-	//window.location.reload();
-}
