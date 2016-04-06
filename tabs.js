@@ -43,11 +43,16 @@ function openSession()
 			item = "web-gui.nameRobot="+i;
 			console.log(item);
 			nameRobot = localStorage.getItem(''+item+'');
-			console.log(nameRobot);
-			$("#Rtabs ul").append("<li class=\"\"><a href='#Rtabs-"+nameRobot+"'>"+nameRobot+"</a></li>");
-			$(".tab-content").append("<div class='tab' id='Rtabs-"+nameRobot+"'><h1>test</h1></div>");
+			$("#Rtabs ul").append("<li class=\'\''><a id='#Rtabs-"+nameRobot+"' href='#Rtabs-"+nameRobot+"'>"+nameRobot+"</a></li>");
+			$(".tab-content").append("<div class='tab' id='Rtabs-"+nameRobot+"'>"+document.getElementById('example').innerHTML+"</div>");
+			reloadTabs();
+			document.getElementById('#Rtabs-'+nameRobot).click();
+	
+			ROSLIBArray[nameRobot] = ROSLIB;
+			rosArray[nameRobot] = new ROSLIBArray[nameRobot].Ros;
+			connect(secure, rosArray[nameRobot]);
 		};
-		reloadTabs();
+			//reloadTabs();
 	}
 
 }

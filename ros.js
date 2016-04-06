@@ -6,44 +6,44 @@
 /*function connect(secure)
 {
 	var ip = document.getElementById('ip').value;
-	var ros;
+	var Ros;
 	console.log('ip=' + ip);
 	converse('ip=' + ip);
 		if(status == "Closed")
 		{
 			if(secure == true)
 			{
-				ros = new ROSLIB.Ros 
+				Ros = new ROSLIB.Ros 
 				({ 
 					url : 'wss://'+ip
 				});
 			}
 			else 
 			{
-				ros = new ROSLIB.Ros 
+				Ros = new ROSLIB.Ros 
 				({ 
 					url : 'ws://'+ip
 				});
 			}
 			
-			ros.on('connection', function() 
+			Ros.on('connection', function() 
 			{
 			console.log('Connected to websocket server.');
 			status='Connected';
 			converse(status);
 	  		});
 
-	  		ros.on('error', function(error) {
+	  		Ros.on('error', function(error) {
 			console.log('Error connecting to websocket server: ', error);
 			converse("Error");
 	  		});
 
-	  		ros.on('close', function() {
+	  		Ros.on('close', function() {
 			console.log('Connection to websocket server closed.');
 			status="Closed";
 			converse(status);
 	  		});
-	  		return ros;
+	  		return Ros;
 		}
 
 
@@ -55,41 +55,41 @@
 
 }*/
 
-function connect(secure, ros)
+function connect(secure, Ros)
 {
 	var ip = document.getElementById('ip').value;
 	console.log('ip=' + ip);
 	converse('ip=' + ip);
-		if(status == "Closed")
-		{
+
 			if(secure == true)
 			{
-				ros.connect('wss://'+ip);
+				Ros.connect('wss://'+ip);
 			}
 			else 
 			{
-				ros.connect('ws://'+ip); 
+				Ros.connect('ws://'+ip); 
 			}
 			
-			ros.on('connection', function() 
+			Ros.on('connection', function() 
 			{
 			console.log('Connected to websocket server.');
 			status='Connected';
 			converse(status);
 	  		});
 
-	  		ros.on('error', function(error) {
+	  		Ros.on('error', function(error) {
 			console.log('Error connecting to websocket server: ', error);
 			converse("Error");
 	  		});
 
-	  		ros.on('close', function() {
+	  		Ros.on('close', function() {
 			console.log('Connection to websocket server closed.');
 			status="Closed";
 			converse(status);
 	  		});
-	  		return ros;
-		}
+
+	  		//return Ros;
+
 
 
 		/*else 
@@ -132,7 +132,7 @@ function connect(secure, ros)
 
 function publisher(Name, MsgType, Message, Ros)
 {
-	if (ros != '')
+	if (Ros != '')
 		console.log('ros existe');
 	else console.log("ros n'existe pas");
 	var topic = new ROSLIB.Topic
@@ -174,148 +174,147 @@ function subscriber(TopicName, MessageType, Ros)
 	});
 }
 
-	// Calling a service
-	// -----------------
+// Calling a service
+// -----------------
 
-	function getSrvRequestDetails(srvType, callback, Ros)
+function getSrvRequestDetails(srvType, Ros, callback)
+{
+	var serviceRequestInfo = new ROSLIB.Service(
 	{
-		var serviceRequestInfo = new ROSLIB.Service(
-		{
-			ros : Ros,
-			name : '/rosapi/service_request_details',
-			type : 'rosapi/ServiceRequestDetails'
-		});
+		ros : Ros,
+		name : '/rosapi/service_request_details',
+		type : 'rosapi/ServiceRequestDetails'
+	});
 
-		var request = new ROSLIB.ServiceRequest(
-		{
-			type : srvType
-		});
-
-		serviceRequestInfo.callService(request, function(result)
-		{
-			console.log(result);
-			console.log(result.typedefs)
-			if (typeof callback === 'function') 
-			{
-				callback(result.typedefs);
-			};
-		});
-
-	}
-
-	function getSrvResponseDetails(srvType, callback, Ros)
+	var request = new ROSLIB.ServiceRequest(
 	{
-		var serviceResponseInfo = new ROSLIB.Service(
-		{
-			ros : Ros,
-			name : '/rosapi/service_response_details',
-			type : 'rosapi/ServiceResponseDetails'
-		});
+		type : srvType
+	});
 
-		var request = new ROSLIB.ServiceRequest(
-		{
-			type : srvType
-		});
-
-		serviceResponseInfo.callService(request, function(result)
+	serviceRequestInfo.callService(request, function(result)
+	{
+		console.log(result);
+		console.log(result.typedefs)
+		if (typeof callback === 'function') 
 		{
 			callback(result.typedefs);
-		});
+		};
+	});
 
-	}
+}
 
-	function callSrv(srvName,srvType,srvRequest, Ros)
-	{
-		var service = new ROSLIB.Service(
-		{
-			ros : Ros,
-			name : srvName,
-			type : srvType
-		});
-		
-		service.callService(srvRequest, function(result)
-		{
-			getSrvResponseDetails(type,function(response)
-			{
-				var typedef = ros.decodeTypeDefs(response);
-				console.log(result);
-				console.log(typedef);
-				genFromObject(result);
-			});
-		});
-	}
-
-	//set, get or change a param
-
-	function createParam(paramName, value, Ros)
-	{
-		var param = new ROSLIB.Param(
-		{
-			ros : Ros,
-			name : paramName
-		});
-		if(value !== undefined && value !="")
-		{
-			param.set(value);
-			converse("création de "+paramName);
-		}
-		return param;
-	}
-
-	function setParam(paramName, value, Ros)
-	{
-		var paramsClient = new ROSLIB.Service({
-			ros : Ros,
-			name : '/rosapi/set_param',
-			serviceType : 'rosapi/SetParam'
-		});
-
-		var request = new ROSLIB.ServiceRequest(
-		{
-			name : paramName,
-			value : value
-		});
-
-
-	 	paramsClient.callService(request);
-		converse("mise à jour de "+paramName+" à "+value);
-
-	}
-
-	function getParam(paramName, Ros) 
-	{
-		var paramsClient = new ROSLIB.Service({
-			ros : Ros,
-			name : '/rosapi/get_param',
-			serviceType : 'rosapi/GetParam'
-
-		});
-
-		var request = new ROSLIB.ServiceRequest(
-		{
-			name : paramName
-		});
-
-
-	 	paramsClient.callService(request, function(result) 
-	 	{
-	    	converse("value of "+paramName+" : "+result.value);
-	    	paramValue=result.value;
-	 	});
-
-	}
-
-	function test()
-	{
-
-
-	}
-
-
-
-
-function strtok(src, delim)
+function getSrvResponseDetails(srvType, Ros, callback)
 {
-	elim_escaped = new RegExp('[' + delim.replace(/[\[\]\(\)\*\+\?\.\\\^\$\|\#\-\{\}\/]/g, "\\$&") + ']', 'g');
-  	return src.replace(delim_escaped, delim[0]).split(delim[0]);
+	var serviceResponseInfo = new ROSLIB.Service(
+	{
+		ros : Ros,
+		name : '/rosapi/service_response_details',
+		type : 'rosapi/ServiceResponseDetails'
+	});
+
+	var request = new ROSLIB.ServiceRequest(
+	{
+		type : srvType
+	});
+
+	serviceResponseInfo.callService(request, function(result)
+	{
+		callback(result.typedefs);
+	});
+
+}
+
+function callSrv(srvName,srvType,srvRequest, Ros)
+{
+	var service = new ROSLIB.Service(
+	{
+		ros : Ros,
+		name : srvName,
+		type : srvType
+	});
+	
+	service.callService(srvRequest, function(result)
+	{
+		getSrvResponseDetails(type, Ros, function(response)
+		{
+			var typedef = ros.decodeTypeDefs(response);
+			console.log(result);
+			console.log(typedef);
+			genFromObject(result);
+		});
+	});
+}
+
+//set, get or change a param
+
+function createParam(paramName, value, Ros)
+{
+	var param = new ROSLIB.Param(
+	{
+		ros : Ros,
+		name : paramName
+	});
+	if(value !== undefined && value !="")
+	{
+		param.set(value);
+		converse("création de "+paramName);
+	}
+	return param;
+}
+
+function setParam(paramName, value, Ros)
+{
+	var paramsClient = new ROSLIB.Service({
+		ros : Ros,
+		name : '/rosapi/set_param',
+		serviceType : 'rosapi/SetParam'
+	});
+
+	var request = new ROSLIB.ServiceRequest(
+	{
+		name : paramName,
+		value : value
+	});
+
+
+ 	paramsClient.callService(request);
+	converse("mise à jour de "+paramName+" à "+value);
+
+}
+
+function getParam(paramName, Ros) 
+{
+	var paramsClient = new ROSLIB.Service({
+		ros : Ros,
+		name : '/rosapi/get_param',
+		serviceType : 'rosapi/GetParam'
+
+	});
+
+	var request = new ROSLIB.ServiceRequest(
+	{
+		name : paramName
+	});
+
+
+ 	paramsClient.callService(request, function(result) 
+ 	{
+    	converse("value of "+paramName+" : "+result.value);
+    	paramValue=result.value;
+ 	});
+
+}
+
+function test()
+{
+
+
+}
+
+function strtok(word, delim)
+{
+
+	delim_escaped = new RegExp('[' + delim.replace(/[\[\]\(\)\*\+\?\.\\\^\$\|\#\-\{\}\/]/g, "\\$&") + ']', 'g');
+  	//return word.replace(delim_escaped, delim[0]).split(delim[0]);
+  	return word.split(delim_escaped);
 }

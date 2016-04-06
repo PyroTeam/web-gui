@@ -1,6 +1,5 @@
 //lecture du formulaire
 var id_echange_interactif = 0;
-//var ros ='';
 var status ='Closed';
 var ech1='',ech2='';
 
@@ -9,6 +8,8 @@ var element = '<fieldset><legend>Formulaire interactif</legend> <form name="echa
 
 var rosArray = new Array;
 var ROSLIBArray = new Array;
+var activeRos;
+
 
 /*function ROS(ROSLIB,)
 {
@@ -16,12 +17,6 @@ var ROSLIBArray = new Array;
 	this.ros = ROSLIB.ros;
 }*/
 
-/*navigator.webkitStorageInfo.requestQuota (
-    PERSISTENT, requestedBytes, function(grantedBytes) {  
-        window.requestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandler); 
-
-    }, function(e) { console.log('Error', e); }
-);*/
 
 //publie un message dans le chat
 
@@ -105,6 +100,7 @@ function genFromObject(object)
 //est appelé par le bouton confirmer du formulaire interactif
 function conf(ech1)
 {
+	var Ros = activeRos;
 	if (action == "topicPublisher")
 	{
 		var type = document.getElementById('0').innerHTML;
@@ -113,12 +109,12 @@ function conf(ech1)
 		
 		var message = new ROSLIB.Message;
 		message = typedef;
-		publisher(ech1,type,message);
+		publisher(ech1,type,message,Ros);
 	}
 
 	if (action == "serviceCall") 
 	{
-		ros.getServiceType(ech1,function(serviceTypes)
+		Ros.getServiceType(ech1,function(serviceTypes)
 		{
 			
 			var type = document.getElementById('0').innerHTML;
@@ -128,7 +124,7 @@ function conf(ech1)
 			}
 			var request = new ROSLIB.ServiceRequest;
 			request = typedef;
-			callSrv(ech1,type,request);
+			callSrv(ech1,type,request,Ros);
 		});
 	};
 }
@@ -167,16 +163,17 @@ function recursive_key(object, iteration,formulaire)
 
 
 //A_ => action
-function A_topicPublisher(ech1,ech2)
+function A_topicPublisher(ech1,ech2,Ros)
 {
+
 	converse(ech1);
-	ros.getTopicType(ech1,function(topicTypes)
+	Ros.getTopicType(ech1,function(topicTypes)
 	{
 		type = topicTypes;
-		ros.getMessageDetails(type,function(getMessageDetails)
+		Ros.getMessageDetails(type,function(getMessageDetails)
 		{
 			def = getMessageDetails;
-			typedef = ros.decodeTypeDefs(def);
+			typedef = Ros.decodeTypeDefs(def);
 			form='';
 			//document.getElementById('echange_interactif').innerHTML = "";
 			recursive_key(typedef,0,type);
@@ -189,25 +186,25 @@ function A_topicPublisher(ech1,ech2)
 	});
 }
 
-function A_topicSubscriber(ech1,ech2)
+function A_topicSubscriber(ech1,ech2,Ros)
 {
-	ros.getTopicType(ech1,function(topicTypes)
+	Ros.getTopicType(ech1,function(topicTypes)
 	{
 		type = topicTypes;
-		subscriber(ech1,type);
+		subscriber(ech1,type,Ros);
 	});
 }
 
-function A_serviceCall(ech1,ech2)
+function A_serviceCall(ech1,ech2,Ros)
 {
 	converse(ech1);
-	ros.getServiceType(ech1,function(serviceTypes)
+	Ros.getServiceType(ech1,function(serviceTypes)
 	{
 		type = serviceTypes;
 		getSrvRequestDetails(type,function(getSrvRequestDetails)
 		{
 			req = getSrvRequestDetails
-			typedef = ros.decodeTypeDefs(req);
+			typedef = Ros.decodeTypeDefs(req);
 			//document.getElementById('echange_interactif').innerHTML = "";
 			form='';
 			recursive_key(typedef,0,type);
@@ -219,9 +216,9 @@ function A_serviceCall(ech1,ech2)
 	});
 }
 
-function A_paramSetGet(ech1,ech2)
+function A_paramSetGet(ech1,ech2,Ros)
 {
-	ros.getParams(function(params)
+	Ros.getParams(function(params)
 	{
 		if (ech1 !== undefined && ech1!="")
 		{
@@ -243,15 +240,15 @@ function A_paramSetGet(ech1,ech2)
 	});				
 }
 
-function A_test(ech1,ech2)
+function A_test(ech1,ech2,Ros)
 {
-	ros.getTopicType(ech1,function(topicTypes)
+	Ros.getTopicType(ech1,function(topicTypes)
 	{
 		type = topicTypes;
-		ros.getMessageDetails(type,function(getMessageDetails)
+		Ros.getMessageDetails(type,function(getMessageDetails)
 		{
 			def = getMessageDetails;
-			typedef = ros.decodeTypeDefs(def);
+			typedef = Ros.decodeTypeDefs(def);
 			document.getElementById('echange_interactif').innerHTML = "";
 			recursive_key(typedef,0,type);
 			id_echange_interactif = 0;
@@ -269,23 +266,23 @@ function lecture()
 	switch(action)
 	{
 		case "test":
-		A_test(ech1,ech2);
+		A_test(ech1,ech2,activeRos);
 		break;
 
 		case "topicPublisher":
-		A_topicPublisher(ech1,ech2);
+		A_topicPublisher(ech1,ech2,activeRos);
 		break;
 
 		case "topicSubscriber":
-		A_topicSubscriber(ech1,ech2);
+		A_topicSubscriber(ech1,ech2,activeRos);
 		break;
 
 		case "serviceCall":
-		A_serviceCall(ech1,ech2);
+		A_serviceCall(ech1,ech2,activeRos);
 		break;
 
 		case "paramSetGet":
-		A_paramSetGet(ech1,ech2);
+		A_paramSetGet(ech1,ech2,activeRos);
 		break;
 
 		default:
@@ -351,7 +348,7 @@ function Lien_action()
 		//document.getElementById("echange3").placeholder = window[document.getElementById("Liste").options[i].value][2];
 		if (i==1 || i == 2)
 		{
-			ros.getTopics(function(topics)
+			activeRos.getTopics(function(topics)
 			{
 				document.getElementById("echange1").className = "ui-autocomplete-input";
 				autoComplete('echange1',topics);
@@ -359,7 +356,7 @@ function Lien_action()
 		}
 		if (i==3) 
 		{
-			ros.getServices(function(services)
+			activeRos.getServices(function(services)
 			{
 				document.getElementById("echange1").className = "ui-autocomplete-input";
 				autoComplete('echange1',services);
@@ -367,7 +364,7 @@ function Lien_action()
 		}
 		if (i==4) 
 		{
-			ros.getParams(function(params)
+			activeRos.getParams(function(params)
 			{
 				document.getElementById("echange1").className = "ui-autocomplete-input";
 				autoComplete('echange1',params);

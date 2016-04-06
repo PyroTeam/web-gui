@@ -21,16 +21,19 @@ https://github.com/asyncly/EventEmitter2.git
 <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 dans le dossier ou sont stocker les pages js
 
+<script type="text/javascript" src="http://cdn.robotwebtools.org/mjpegcanvasjs/current/mjpegcanvas.js"></script>
 <link type="text/css" rel="stylesheet" href="css/style_Ltabs.css" />-->
-<link type="text/css" rel="stylesheet" href="css/style_Rtabs.css" />
-<link type="text/css" rel="stylesheet" href="css/style.css" />
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-
 
 <script type="text/javascript" src="local/eventemitter2.js"></script>
 <script type="text/javascript" src="local/roslib.js"></script>
 <script type="text/javascript" src="local/jQueryLibraryV1.10.2.js"></script>
 <script type="text/javascript" src="local/jQuery UI - v1.11.4 - 2015-03-11.js"></script>
+
+<link type="text/css" rel="stylesheet" href="css/style_Rtabs.css" />
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
 
 
@@ -53,19 +56,21 @@ $(document).ready(function()
 });*/
 function reloadTabs() 
 {
-    $('.tabs .tab-links a').on('click', function(e)  
-    {
-        var currentAttrValue = $(this).attr('href');
- 
-        // Show/Hide Tabs
-        $('.tabs ' + currentAttrValue).show().siblings().hide();
-        $('.tabs ' + currentAttrValue).addClass('active').siblings().removeClass('active');
- 	
-        // Change/remove current tab to active
-        $(this).parent('li').addClass('active').siblings().removeClass('active');
- 
-        //e.preventDefault();
-    });
+	$('.tabs .tab-links a').on('click', function(e)  
+	{
+		var currentAttrValue = $(this).attr('href');
+		activeRos = strtok(currentAttrValue,'-')[1];
+		activeRos = rosArray[activeRos];
+		// Show/Hide Tabs
+		$('.tabs ' + currentAttrValue).show().siblings().hide();
+		$('.tabs ' + currentAttrValue).addClass('active').siblings().removeClass('active');
+
+		// Change/remove current tab to active
+		$(this).parent('li').addClass('active').siblings().removeClass('active');
+
+		//e.preventDefault();
+		//activeRos = getRosFromActiveTab();
+	});
 }
 $(document).ready(reloadTabs);
 
