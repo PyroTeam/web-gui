@@ -9,7 +9,8 @@ var element = '<fieldset><legend>Formulaire interactif</legend> <form name="echa
 var rosArray = new Array;
 var ROSLIBArray = new Array;
 var activeRos;
-
+var activeRosName;
+var rosElement; 
 
 /*function ROS(ROSLIB,)
 {
@@ -321,7 +322,115 @@ var action="";
 //modifie les placeholder et les autocomplete selon les cas
 function Lien_action() 
 {
-	document.getElementById("echange1").className = "";
+
+	rosElement.querySelector("#echange1").className = "";
+	rosElement.querySelector("#echange2").className = "";
+	rosElement.querySelector("#echange1").removeAttribute("autocomplete");
+	rosElement.querySelector("#echange2").removeAttribute("autocomplete");
+	removeAC("echange1");
+	i = rosElement.querySelector("#Liste").selectedIndex;
+	if (i == 0)
+	{
+		rosElement.querySelector("#echange1").placeholder = '';
+		rosElement.querySelector("#echange2").placeholder = '';
+		//rosElement.querySelector("#echange3").placeholder = '';
+	}
+	else if (i == 5)
+	{
+		action=rosElement.querySelector("#Liste").options[i].value;
+		console.log(action);
+
+	}
+	else
+	{
+		action=rosElement.querySelector("#Liste").options[i].value;
+		console.log(action);
+		rosElement.querySelector("#echange1").placeholder = window[rosElement.querySelector("#Liste").options[i].value][0];
+		rosElement.querySelector("#echange2").placeholder = window[rosElement.querySelector("#Liste").options[i].value][1];
+		//rosElement.querySelector("#echange3").placeholder = window[rosElement.querySelector("#Liste").options[i].value][2];
+		if (i==1 || i == 2)
+		{
+			activeRos.getTopics(function(topics)
+			{
+				rosElement.querySelector("#echange1").className = "ui-autocomplete-input";
+				autoComplete_AT('echange1',topics);
+			});	
+		}
+		if (i==3) 
+		{
+			activeRos.getServices(function(services)
+			{
+				rosElement.querySelector("#echange1").className = "ui-autocomplete-input";
+				autoComplete_AT('echange1',services);
+			})
+		}
+		if (i==4) 
+		{
+			activeRos.getParams(function(params)
+			{
+				rosElement.querySelector("#echange1").className = "ui-autocomplete-input";
+				autoComplete_AT('echange1',params);
+			})
+		}
+	}
+	/*$('.tab.active #echange1').attr("placeholder");
+	$('.tab.active #echange1').removeAttr("placeholder");
+
+
+	$('.tab.active #echange1').attr("className","");
+	$('.tab.active #echange2').attr("className","");
+	$('.tab.active #echange1').removeAttr("autocomplete");
+	$('.tab.active #echange2').removeAttr("autocomplete");
+	
+	//removeAC("echange1");
+	i = $('.tab.active #Liste').attr("selectedIndex");
+
+	if (i == 0)
+	{
+		$('.tab.active #echange1').attr('placeholder','');
+		$('.tab.active #echange2').attr('placeholder', '');
+		//$('.tab.active #echange3').attr('placeholder', '');
+	}
+	else if (i == 5)
+	{
+		action=$('.tab.active #Liste').attr('options[i].value');
+		console.log(action);
+
+	}
+	else
+	{
+		action=$('.tab.active #Liste').attr('options[i].value');
+		console.log(action);
+		value = $('.tab.active #Liste').attr('options[i].value');
+		$('.tab.active #echange1').attr('placeholder',value[0]);
+		$('.tab.active #echange2').attr('placeholder',$('.tab.active #Liste').attr('options[i].value')[1]);
+		//$('.tab.active #echange3').attr('placeholder','window[$('.tab.active #Liste').attr('options[i].value')][2];
+		if (i==1 || i == 2)
+		{
+			activeRos.getTopics(function(topics)
+			{
+				$('.tab.active #echange1').attr('className',"ui-autocomplete-input");
+				autoComplete_AT('echange1',topics);
+			});	
+		}
+		if (i==3) 
+		{
+			activeRos.getServices(function(services)
+			{
+				$('.tab.active #echange1').attr('className',"ui-autocomplete-input");
+				autoComplete_AT('echange1',services);
+			})
+		}
+		if (i==4) 
+		{
+			activeRos.getParams(function(params)
+			{
+				$('.tab.active #echange1').attr('className',"ui-autocomplete-input");
+				autoComplete_AT('echange1',params);
+			})
+		}
+	}*/
+	/*document.getElementById("echange1").className = "";
 	document.getElementById("echange2").className = "";
 	document.getElementById("echange1").removeAttribute("autocomplete");
 	document.getElementById("echange2").removeAttribute("autocomplete");
@@ -370,7 +479,7 @@ function Lien_action()
 				autoComplete('echange1',params);
 			})
 		}
-	}	
+	}	*/
 }
 
 
@@ -394,4 +503,24 @@ function removeAC(inputId)
 		$( id ).autocomplete({source: vide});
 	});
 }
+
+
+function removeAC_AT(inputId) //active tab
+{
+	jQuery(function ($)
+	{
+		var id = "#"+inputId;
+		var vide = new Array;
+		$( id ).autocomplete({source: vide});
+	});
+}
+
+function autoComplete_AT(inputId,array)
+{
+	jQuery(function ($)
+	{
+		var id = ".tab.active #"+inputId;
+		$( id ).autocomplete({source:array});
+	});
+}	
 

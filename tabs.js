@@ -5,9 +5,14 @@ function addRobot(secure)
 	$(".tab-content").append("<div class='tab' id='Rtabs-"+nameRobot+"'>"+document.getElementById('example').innerHTML+"</div>");
 	reloadTabs();
 	document.getElementById('#Rtabs-'+nameRobot).click();
-	
+
 	ROSLIBArray[nameRobot] = ROSLIB;
 	rosArray[nameRobot] = new ROSLIBArray[nameRobot].Ros;
+
+	activeRosName = nameRobot;
+	activeRos = rosArray[activeRosName];
+	rosElement = document.querySelector("#Rtabs-"+activeRosName);
+	
 	connect(secure, rosArray[nameRobot]);
 
 	//mise en mémoire des onglets

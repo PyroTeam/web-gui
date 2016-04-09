@@ -59,8 +59,9 @@ function reloadTabs()
 	$('.tabs .tab-links a').on('click', function(e)  
 	{
 		var currentAttrValue = $(this).attr('href');
-		activeRos = strtok(currentAttrValue,'-')[1];
-		activeRos = rosArray[activeRos];
+		activeRosName = strtok(currentAttrValue,'-')[1];
+		activeRos = rosArray[activeRosName];
+		rosElement = document.querySelector("#Rtabs-"+activeRosName);
 		// Show/Hide Tabs
 		$('.tabs ' + currentAttrValue).show().siblings().hide();
 		$('.tabs ' + currentAttrValue).addClass('active').siblings().removeClass('active');
