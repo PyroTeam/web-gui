@@ -8,6 +8,11 @@ function addRobot(secure)
 	
 	ROSLIBArray[nameRobot] = ROSLIB;
 	rosArray[nameRobot] = new ROSLIBArray[nameRobot].Ros;
+	
+	activeRosName = nameRobot;
+	activeRos = rosArray[activeRosName];
+	rosElement = document.querySelector("#Rtabs-"+activeRosName);
+
 	connect(secure, rosArray[nameRobot]);
 
 	//mise en mémoire des onglets

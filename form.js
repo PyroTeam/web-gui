@@ -9,7 +9,8 @@ var element = '<fieldset><legend>Formulaire interactif</legend> <form name="echa
 var rosArray = new Array;
 var ROSLIBArray = new Array;
 var activeRos;
-
+var activeRosName;
+var rosElement; 
 
 /*function ROS(ROSLIB,)
 {
@@ -36,38 +37,38 @@ function genFromForm(typedef)
 	var i = 1,j = 0;
 	var floatType = ["float64","float32"];
 	var intType = ["uint8","uint16","uint32","uint64"];
-	if (document.getElementById(i).innerHTML == '' && i == 1) //seulement une ligne d'input
+	if (rosElement.querySelector(i).innerHTML == '' && i == 1) //seulement une ligne d'input
 	{
-		while (document.getElementById(i) != null)
+		while (rosElement.querySelector(i) != null)
 		{
-			if ((document.getElementById(i).placeholder.indexOf("float") >= 0) && floatType.indexOf(document.getElementById(i).placeholder) != -1)
-				typedef[document.getElementById(i).name]=parseFloat(document.getElementById(i).value);
-			if ((document.getElementById(i).placeholder.indexOf("int") >= 0) && intType.indexOf(document.getElementById(i).placeholder) != -1)
-				typedef[document.getElementById(i).name]=parseInt(document.getElementById(i).value);
-			if (document.getElementById(i).placeholder == "string")
-				typedef[document.getElementById(i).name]=document.getElementById(i).value.toString();
+			if ((rosElement.querySelector(i).placeholder.indexOf("float") >= 0) && floatType.indexOf(rosElement.querySelector(i).placeholder) != -1)
+				typedef[rosElement.querySelector(i).name]=parseFloat(rosElement.querySelector(i).value);
+			if ((rosElement.querySelector(i).placeholder.indexOf("int") >= 0) && intType.indexOf(rosElement.querySelector(i).placeholder) != -1)
+				typedef[rosElement.querySelector(i).name]=parseInt(rosElement.querySelector(i).value);
+			if (rosElement.querySelector(i).placeholder == "string")
+				typedef[rosElement.querySelector(i).name]=rosElement.querySelector(i).value.toString();
 			i++
 		}
 	}
 	else //objet complexe
 	{
-		while (document.getElementById(i) != null)
+		while (rosElement.querySelector(i) != null)
 		{
 			
-			if  (document.getElementById(i).innerHTML != '') 
+			if  (rosElement.querySelector(i).innerHTML != '') 
 			{
 				if (i != 1)
 					j++;
-				navigateur[j] = document.getElementById(i).innerHTML;
+				navigateur[j] = rosElement.querySelector(i).innerHTML;
 			}
 			else
 			{
-				if ((document.getElementById(i).placeholder.indexOf("float") >= 0) && floatType.indexOf(document.getElementById(i).placeholder) != -1)
-					typedef[navigateur[j]][document.getElementById(i).name]=parseFloat(document.getElementById(i).value);
-				if ((document.getElementById(i).placeholder.indexOf("int") >= 0) && intType.indexOf(document.getElementById(i).placeholder) != -1)
-					typedef[navigateur[j]][document.getElementById(i).name]=parseInt(document.getElementById(i).value);
-				if (document.getElementById(i).placeholder == "string")
-					typedef[navigateur[j]][document.getElementById(i).name]=document.getElementById(i).value.toString();
+				if ((rosElement.querySelector(i).placeholder.indexOf("float") >= 0) && floatType.indexOf(rosElement.querySelector(i).placeholder) != -1)
+					typedef[navigateur[j]][rosElement.querySelector(i).name]=parseFloat(rosElement.querySelector(i).value);
+				if ((rosElement.querySelector(i).placeholder.indexOf("int") >= 0) && intType.indexOf(rosElement.querySelector(i).placeholder) != -1)
+					typedef[navigateur[j]][rosElement.querySelector(i).name]=parseInt(rosElement.querySelector(i).value);
+				if (rosElement.querySelector(i).placeholder == "string")
+					typedef[navigateur[j]][rosElement.querySelector(i).name]=rosElement.querySelector(i).value.toString();
 			}
 			i++;
 		}
@@ -103,7 +104,7 @@ function conf(ech1)
 	var Ros = activeRos;
 	if (action == "topicPublisher")
 	{
-		var type = document.getElementById('0').innerHTML;
+		var type = rosElement.querySelector('#0').innerHTML;
 		//var i = 1,j = 0;
 		typedef = genFromForm(typedef);
 		
@@ -117,14 +118,14 @@ function conf(ech1)
 		Ros.getServiceType(ech1,function(serviceTypes)
 		{
 			
-			var type = document.getElementById('0').innerHTML;
-			if(document.getElementById('1') != null)  
+			var type = rosElement.querySelector('#0').innerHTML;
+			if(rosElement.querySelector('#1') != null)  
 			{
 				typedef = genFromForm(typedef); //verifier l'existence d'1 input
 			}
 			var request = new ROSLIB.ServiceRequest;
 			request = typedef;
-			callSrv(ech1,type,request,Ros);
+			callSrv(ech1,type,request,activeRos);
 		});
 	};
 }
@@ -177,8 +178,10 @@ function A_topicPublisher(ech1,ech2,Ros)
 			form='';
 			//document.getElementById('echange_interactif').innerHTML = "";
 			recursive_key(typedef,0,type);
-			$('#echange_interactif').empty();
-			$('#echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
+			//$('#echange_interactif').empty();
+			//$('#echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
+			rosElement.querySelector('#echange_interactif').empty();
+			rosElement.querySelector('#echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
 			//document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
 			id_echange_interactif = 0;
 			
@@ -224,16 +227,16 @@ function A_paramSetGet(ech1,ech2,Ros)
 		{
 			if (params.indexOf(ech1) == -1)
 			{
-				var param = createParam(ech1,ech2);
+				var param = createParam(ech1,ech2,Ros);
 			}
 			else if (ech2 !== undefined && ech2 !="")
 			{
-				setParam(ech1,ech2);
+				setParam(ech1,ech2,Ros);
 			}
 			else
 			{
 				var paramValue;
-				getParam(ech1);
+				getParam(ech1,Ros);
 			}
 		}
 			
@@ -249,7 +252,7 @@ function A_test(ech1,ech2,Ros)
 		{
 			def = getMessageDetails;
 			typedef = Ros.decodeTypeDefs(def);
-			document.getElementById('echange_interactif').innerHTML = "";
+			rosElement.querySelector('echange_interactif').innerHTML = "";
 			recursive_key(typedef,0,type);
 			id_echange_interactif = 0;
 		});
@@ -259,8 +262,8 @@ function A_test(ech1,ech2,Ros)
 //Est appelé par bouton envoyer pour rediriger vers la fonction correspondante, avec les valeurs des champs
 function lecture()
 {
-	ech1 = document.getElementById('echange1').value;
-	ech2 = document.getElementById('echange2').value;
+	ech1 = rosElement.querySelector('#echange1').value;
+	ech2 = rosElement.querySelector('#echange2').value;
 	console.log('lecture '+action);
 	
 	switch(action)
@@ -321,56 +324,56 @@ var action="";
 //modifie les placeholder et les autocomplete selon les cas
 function Lien_action() 
 {
-	document.getElementById("echange1").className = "";
-	document.getElementById("echange2").className = "";
-	document.getElementById("echange1").removeAttribute("autocomplete");
-	document.getElementById("echange2").removeAttribute("autocomplete");
+	rosElement.querySelector("#echange1").className = "";
+	rosElement.querySelector("#echange2").className = "";
+	rosElement.querySelector("#echange1").removeAttribute("autocomplete");
+	rosElement.querySelector("#echange2").removeAttribute("autocomplete");
 	removeAC("echange1");
-	i = document.getElementById("Liste").selectedIndex;
+	i = rosElement.querySelector("#Liste").selectedIndex;
 	if (i == 0)
 	{
-		document.getElementById("echange1").placeholder = '';
-		document.getElementById("echange2").placeholder = '';
-		//document.getElementById("echange3").placeholder = '';
+		rosElement.querySelector("#echange1").placeholder = '';
+		rosElement.querySelector("#echange2").placeholder = '';
+		//rosElement.querySelector("#echange3").placeholder = '';
 	}
 	else if (i == 5)
 	{
-		action=document.getElementById("Liste").options[i].value;
+		action=rosElement.querySelector("#Liste").options[i].value;
 		console.log(action);
 
 	}
 	else
 	{
-		action=document.getElementById("Liste").options[i].value;
+		action=rosElement.querySelector("#Liste").options[i].value;
 		console.log(action);
-		document.getElementById("echange1").placeholder = window[document.getElementById("Liste").options[i].value][0];
-		document.getElementById("echange2").placeholder = window[document.getElementById("Liste").options[i].value][1];
-		//document.getElementById("echange3").placeholder = window[document.getElementById("Liste").options[i].value][2];
+		rosElement.querySelector("#echange1").placeholder = window[rosElement.querySelector("#Liste").options[i].value][0];
+		rosElement.querySelector("#echange2").placeholder = window[rosElement.querySelector("#Liste").options[i].value][1];
+		//rosElement.querySelector("#echange3").placeholder = window[rosElement.querySelector("#Liste").options[i].value][2];
 		if (i==1 || i == 2)
 		{
 			activeRos.getTopics(function(topics)
 			{
-				document.getElementById("echange1").className = "ui-autocomplete-input";
-				autoComplete('echange1',topics);
+				rosElement.querySelector("#echange1").className = "ui-autocomplete-input";
+				autoComplete_AT('echange1',topics);
 			});	
 		}
 		if (i==3) 
 		{
 			activeRos.getServices(function(services)
 			{
-				document.getElementById("echange1").className = "ui-autocomplete-input";
-				autoComplete('echange1',services);
+				rosElement.querySelector("#echange1").className = "ui-autocomplete-input";
+				autoComplete_AT('echange1',services);
 			})
 		}
 		if (i==4) 
 		{
 			activeRos.getParams(function(params)
 			{
-				document.getElementById("echange1").className = "ui-autocomplete-input";
-				autoComplete('echange1',params);
+				rosElement.querySelector("#echange1").className = "ui-autocomplete-input";
+				autoComplete_AT('echange1',params);
 			})
 		}
-	}	
+	}
 }
 
 
@@ -395,3 +398,21 @@ function removeAC(inputId)
 	});
 }
 
+function removeAC_AT(inputId) //active tab
+{
+	jQuery(function ($)
+	{
+		var id = "#"+inputId;
+		var vide = new Array;
+		$( id ).autocomplete({source: vide});
+	});
+}
+
+function autoComplete_AT(inputId,array)
+{
+	jQuery(function ($)
+	{
+		var id = ".tab.active #"+inputId;
+		$( id ).autocomplete({source:array});
+	});
+}	
