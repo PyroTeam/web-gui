@@ -11,6 +11,8 @@ var ROSLIBArray = new Array;
 var activeRos;
 var activeRosName;
 var rosElement; 
+var robotList = new Array;
+
 
 /*function ROS(ROSLIB,)
 {
@@ -27,7 +29,7 @@ function converse(message)
 	var maj = $('.tab.active #conversation').html();
 	maj += '<br>' + message;
 	//document.getElementById("conversation").innerHTML = maj;
-	$('.tab.active #conversation').html(maj);
+	$('#Rtabs .tab.active #conversation').html(maj);
 } 
 
 // rempli un objet défini mais vide à partir d'un formulaire
@@ -35,40 +37,40 @@ function genFromForm(typedef)
 {
 	var navigateur = new Array;
 	var i = 1,j = 0;
-	var floatType = ["float64","float32"];
+	var floatType = ["float64","float32","float16"];
 	var intType = ["uint8","uint16","uint32","uint64"];
-	if (rosElement.querySelector(i).innerHTML == '' && i == 1) //seulement une ligne d'input
+	if (rosElement.querySelector('#i'+i).innerHTML == '' && i == 1) //seulement une ligne d'input
 	{
-		while (rosElement.querySelector(i) != null)
+		while (rosElement.querySelector('#i'+i) != null)
 		{
-			if ((rosElement.querySelector(i).placeholder.indexOf("float") >= 0) && floatType.indexOf(rosElement.querySelector(i).placeholder) != -1)
-				typedef[rosElement.querySelector(i).name]=parseFloat(rosElement.querySelector(i).value);
-			if ((rosElement.querySelector(i).placeholder.indexOf("int") >= 0) && intType.indexOf(rosElement.querySelector(i).placeholder) != -1)
-				typedef[rosElement.querySelector(i).name]=parseInt(rosElement.querySelector(i).value);
-			if (rosElement.querySelector(i).placeholder == "string")
-				typedef[rosElement.querySelector(i).name]=rosElement.querySelector(i).value.toString();
+			if ((rosElement.querySelector('#i'+i).placeholder.indexOf("float") >= 0) && floatType.indexOf(rosElement.querySelector('#i'+i).placeholder) != -1)
+				typedef[rosElement.querySelector('#i'+i).name]=parseFloat(rosElement.querySelector('#i'+i).value);
+			if ((rosElement.querySelector('#i'+i).placeholder.indexOf("int") >= 0) && intType.indexOf(rosElement.querySelector('#i'+i).placeholder) != -1)
+				typedef[rosElement.querySelector('#i'+i).name]=parseInt(rosElement.querySelector('#i'+i).value);
+			if (rosElement.querySelector('#i'+i).placeholder == "string")
+				typedef[rosElement.querySelector('#i'+i).name]=rosElement.querySelector('#i'+i).value.toString();
 			i++
 		}
 	}
 	else //objet complexe
 	{
-		while (rosElement.querySelector(i) != null)
+		while (rosElement.querySelector('#i'+i) != null)
 		{
 			
-			if  (rosElement.querySelector(i).innerHTML != '') 
+			if  (rosElement.querySelector('#i'+i).innerHTML != '') 
 			{
 				if (i != 1)
 					j++;
-				navigateur[j] = rosElement.querySelector(i).innerHTML;
+				navigateur[j] = rosElement.querySelector('#i'+i).innerHTML;
 			}
 			else
 			{
-				if ((rosElement.querySelector(i).placeholder.indexOf("float") >= 0) && floatType.indexOf(rosElement.querySelector(i).placeholder) != -1)
-					typedef[navigateur[j]][rosElement.querySelector(i).name]=parseFloat(rosElement.querySelector(i).value);
-				if ((rosElement.querySelector(i).placeholder.indexOf("int") >= 0) && intType.indexOf(rosElement.querySelector(i).placeholder) != -1)
-					typedef[navigateur[j]][rosElement.querySelector(i).name]=parseInt(rosElement.querySelector(i).value);
-				if (rosElement.querySelector(i).placeholder == "string")
-					typedef[navigateur[j]][rosElement.querySelector(i).name]=rosElement.querySelector(i).value.toString();
+				if ((rosElement.querySelector('#i'+i).placeholder.indexOf("float") >= 0) && floatType.indexOf(rosElement.querySelector('#i'+i).placeholder) != -1)
+					typedef[navigateur[j]][rosElement.querySelector('#i'+i).name]=parseFloat(rosElement.querySelector('#i'+i).value);
+				if ((rosElement.querySelector('#i'+i).placeholder.indexOf("int") >= 0) && intType.indexOf(rosElement.querySelector('#i'+i).placeholder) != -1)
+					typedef[navigateur[j]][rosElement.querySelector('#i'+i).name]=parseInt(rosElement.querySelector('#i'+i).value);
+				if (rosElement.querySelector('#i'+i).placeholder == "string")
+					typedef[navigateur[j]][rosElement.querySelector('#i'+i).name]=rosElement.querySelector('#i'+i).value.toString();
 			}
 			i++;
 		}
@@ -104,7 +106,7 @@ function conf(ech1)
 	var Ros = activeRos;
 	if (action == "topicPublisher")
 	{
-		var type = rosElement.querySelector('#0').innerHTML;
+		var type = rosElement.querySelector('#i0').innerHTML;
 		//var i = 1,j = 0;
 		typedef = genFromForm(typedef);
 		
@@ -118,8 +120,8 @@ function conf(ech1)
 		Ros.getServiceType(ech1,function(serviceTypes)
 		{
 			
-			var type = rosElement.querySelector('#0').innerHTML;
-			if(rosElement.querySelector('#1') != null)  
+			var type = rosElement.querySelector('#i0').innerHTML;
+			if(rosElement.querySelector('#i1') != null)  
 			{
 				typedef = genFromForm(typedef); //verifier l'existence d'1 input
 			}
@@ -135,7 +137,7 @@ function recursive_key(object, iteration,formulaire)
 {
 	if (formulaire != '')
 	{
-		formulaire = "<p id='"+id_echange_interactif+"'>"+formulaire+"</p>";
+		formulaire = "<p id='i"+id_echange_interactif+"'>"+formulaire+"</p>";
 		//document.getElementById('echange_interactif').innerHTML = formulaire;
 		form = formulaire;
 	}
@@ -147,7 +149,7 @@ function recursive_key(object, iteration,formulaire)
 		if (typeof object[key] === 'object')
 		{
 			//converse("name:"+key+" typeof:"+typeof object[key]);
-			formulaire = "<p id='"+id_echange_interactif+"'>"+key+"</p>";
+			formulaire = "<p id='i"+id_echange_interactif+"'>"+key+"</p>";
 			//document.getElementById('echange_interactif').innerHTML += formulaire;
 			form += formulaire;
 			recursive_key(object[key],iteration++,'');
@@ -155,7 +157,7 @@ function recursive_key(object, iteration,formulaire)
 		else 
 		{
 			//converse("name:"+key+" name:"+object[key]+" iteration:"+iteration);
-			formulaire = key+" <input type=\"text\" id='"+id_echange_interactif+"'name=\""+key+"\" value=\"\" placeholder=\""+object[key]+"\"size=\"15\">";
+			formulaire = key+" <input type=\"text\" id='i"+id_echange_interactif+"'name=\""+key+"\" value=\"\" placeholder=\""+object[key]+"\"size=\"15\">";
 			form += formulaire;
 			//document.getElementById('echange_interactif').innerHTML += formulaire;
 		}
@@ -178,10 +180,8 @@ function A_topicPublisher(ech1,ech2,Ros)
 			form='';
 			//document.getElementById('echange_interactif').innerHTML = "";
 			recursive_key(typedef,0,type);
-			//$('#echange_interactif').empty();
-			//$('#echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
-			rosElement.querySelector('#echange_interactif').empty();
-			rosElement.querySelector('#echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
+			$('#Rtabs .tab.active #echange_interactif').empty();
+			$('#Rtabs .tab.active #echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
 			//document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
 			id_echange_interactif = 0;
 			
@@ -211,8 +211,8 @@ function A_serviceCall(ech1,ech2,Ros)
 			//document.getElementById('echange_interactif').innerHTML = "";
 			form='';
 			recursive_key(typedef,0,type);
-			$('#echange_interactif').empty();
-			$('#echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
+			$('#Rtabs .tab.active #echange_interactif').empty();
+			$('#Rtabs .tab.active #echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
 			//document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
 			id_echange_interactif = 0;
 		});
@@ -257,6 +257,18 @@ function A_test(ech1,ech2,Ros)
 			id_echange_interactif = 0;
 		});
 	});
+	/*var topicTest = new ROSLIB.Topic({
+			ros :activeRos,
+			name : "/map",
+			messageType : "nav_msgs/OccupancyGrid"
+		});
+	topicTest.subscribe(function(message) 
+	{
+		ROS2D.OccupancyGrid(messgae);
+		topic.unsubscribe();
+	});
+
+	ROS2D.OccupancyGridClient(activeRos,"/map",true);*/
 }
 
 //Est appelé par bouton envoyer pour rediriger vers la fonction correspondante, avec les valeurs des champs
@@ -376,7 +388,15 @@ function Lien_action()
 	}
 }
 
-
+function completeTopics () 
+{
+	var name = document.getElementById("permanent_robot_name").value;
+	if(robotList.indexOf(name) != -1)
+	rosArray[name].getTopics(function(topics)
+	{
+		autoComplete('permanent_topic_name',topics);
+	});	
+}
 
 
 function autoComplete(inputId,array)
@@ -416,3 +436,4 @@ function autoComplete_AT(inputId,array)
 		$( id ).autocomplete({source:array});
 	});
 }	
+

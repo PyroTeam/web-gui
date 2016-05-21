@@ -1,60 +1,5 @@
 // Connecting to ROS
 // -----------------
-
-
-
-/*function connect(secure)
-{
-	var ip = document.getElementById('ip').value;
-	var Ros;
-	console.log('ip=' + ip);
-	converse('ip=' + ip);
-		if(status == "Closed")
-		{
-			if(secure == true)
-			{
-				Ros = new ROSLIB.Ros 
-				({ 
-					url : 'wss://'+ip
-				});
-			}
-			else 
-			{
-				Ros = new ROSLIB.Ros 
-				({ 
-					url : 'ws://'+ip
-				});
-			}
-			
-			Ros.on('connection', function() 
-			{
-			console.log('Connected to websocket server.');
-			status='Connected';
-			converse(status);
-	  		});
-
-	  		Ros.on('error', function(error) {
-			console.log('Error connecting to websocket server: ', error);
-			converse("Error");
-	  		});
-
-	  		Ros.on('close', function() {
-			console.log('Connection to websocket server closed.');
-			status="Closed";
-			converse(status);
-	  		});
-	  		return Ros;
-		}
-
-
-		/*else 
-		{
-			console.log('Already connected');
-			converse('Already connected');
-		}
-
-}*/
-
 function connect(secure, Ros)
 {
 	var ip = document.getElementById('ip').value;
@@ -100,38 +45,14 @@ function connect(secure, Ros)
 
 }
 
-/*function init()
-{
-	//ros = a robot
-	ros = new ROSLIB.Ros 
-	({ 
-		url : 'ws://127.0.0.1:9090'
-	});
-
-
-	ros.on('connection', function() {
-	console.log('Connected to websocket server.');
-	status='connected';
-	});
-
-	ros.on('error', function(error) {
-	console.log('Error connecting to websocket server: ', error);
-	});
-
-	ros.on('Closed', function() {
-	console.log('Connection to websocket server Closed.');
-	status="Closed";
-	});
-
-}*/
-
-
 
 // Publishing a Topic
 // ------------------
 
 function publisher(Name, MsgType, Message, Ros)
 {
+	var x;
+	clearInterval(x);
 	if (Ros != '')
 		console.log('ros existe');
 	else console.log("ros n'existe pas");
@@ -145,11 +66,12 @@ function publisher(Name, MsgType, Message, Ros)
 	topic.publish(Message);
 	console.log('type ' + MsgType);
 	console.log('message ' + Message);
+	x = setInterval("console.log(\""+Name+"\")", 500);
 
 }
 
-  // Subscribing to a Topic
-  // ----------------------
+// Subscribing to a Topic for an instant
+// ----------------------
 
 function subscriber(TopicName, MessageType, Ros)
 {
@@ -158,6 +80,7 @@ function subscriber(TopicName, MessageType, Ros)
 		name : TopicName,
 		messageType : MessageType
 	});
+
 
 	topic.subscribe(function(message) 
 	{
@@ -171,6 +94,79 @@ function subscriber(TopicName, MessageType, Ros)
 		}
 		converse(data);
 	  	topic.unsubscribe();
+	});
+
+
+}
+
+function liveSpaceSubscriber(NameRobot, TopicName, MessageType, Ros)
+{
+	var topic = new ROSLIB.Topic({
+		ros :Ros,
+		name : TopicName,
+		messageType : MessageType
+	});
+
+	topic.subscribe(function(message) 
+	{
+	  	console.log('received message on ' + topic.name + ': ');	
+	  	console.log(message);
+	  	topic.unsubscribe();
+	  	var data='';
+	  	for (var key in message) 
+		{
+	  		data += key +'<span class="' + key +'" ></span><br>';
+		}  	
+		console.log(data);
+
+		var id = NameRobot+"-"+TopicName;
+		console.log(id);
+		id = id.replace('_','-');
+		id = id.replace('/','-');
+		id = id.replace('/','-');
+		console.log(id);
+	  	$('#Ltabs-1').append("<fieldset class="+id+"><legend>" + NameRobot + " " + TopicName +"</legend>"+data+"</fieldset>");
+
+	  	for (var key in message) 
+		{
+			/*console.log("message:");
+			console.log(message);
+			console.log("msg key");
+			console.log(message[key]);
+			console.log("key");
+			console.log(key);*/
+	  		genSpanInfoFromObject(message[key],key,NameRobot,TopicName);
+		}	
+	  	getLiveInfo(NameRobot,TopicName); 
+	});
+}
+
+//permanent subscribe
+function pSubscriber(NameRobot, TopicName, MessageType, def, Ros)
+{
+	var selector = NameRobot+TopicName
+	var topic = new ROSLIB.Topic({
+		ros :Ros,
+		name : TopicName,
+		messageType : MessageType
+	});
+
+	topic.subscribe(function(message) 
+	{	
+		var type = new Array;
+		var i=0;
+	  	for (var key in def) 
+		{
+			type[i] = (def[key].fieldtypes);
+			i++;
+		}	
+		//console.log(message);
+		for (var key in message) 
+		{
+			//console.log(message[key]);
+
+		}
+		genInfoFromObject(message,type,NameRobot,TopicName);		
 	});
 }
 
