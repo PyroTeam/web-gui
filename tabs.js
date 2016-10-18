@@ -1,31 +1,42 @@
 function addRobot(secure)
 {
 	var nameRobot = document.getElementById('name').value; 
-	$("#Rtabs ul").append("<li class=\'\''><a id='#Rtabs-"+nameRobot+"' href='#Rtabs-"+nameRobot+"'>"+nameRobot+"</a></li>");
-	$(".tab-content").append("<div class='tab' id='Rtabs-"+nameRobot+"'>"+document.getElementById('example').innerHTML+"</div>");
-	reloadTabs();
-	document.getElementById('#Rtabs-'+nameRobot).click();
-
-	ROSLIBArray[nameRobot] = ROSLIB;
-	rosArray[nameRobot] = new ROSLIBArray[nameRobot].Ros;
-
-	activeRosName = nameRobot;
-	activeRos = rosArray[activeRosName];
-	rosElement = document.querySelector("#Rtabs-"+activeRosName);
-	
-	connect(secure, rosArray[nameRobot]);
-
-	//mise en mémoire des onglets
-	if(window.localStorage)
+	if(robotList.indexOf(nameRobot) == -1)
 	{
-		window.localStorage['web-gui.nameRobot='+window.localStorage.length] = nameRobot;
+		$("#Rtabs ul").append("<li class=\'\''><a id='#Rtabs-"+nameRobot+"' href='#Rtabs-"+nameRobot+"'>"+nameRobot+"</a></li>");
+		$("#Rtabs .tab-content").append("<div class='tab' id='Rtabs-"+nameRobot+"'>"+document.getElementById('example').innerHTML+"</div>");
+		reloadTabs();
+		document.getElementById('#Rtabs-'+nameRobot).click();
+		
+		ROSLIBArray[nameRobot] = ROSLIB;
+		rosArray[nameRobot] = new ROSLIBArray[nameRobot].Ros;
+
+	
+		robotList.push(nameRobot);
+		activeRosName = nameRobot;
+		activeRos = rosArray[activeRosName];
+		rosElement = document.querySelector("#Rtabs-"+activeRosName);
+
+		connect(secure, rosArray[nameRobot]);
+		autoComplete("permanent_robot_name",robotList);
+		//mise en mémoire des onglets
+		if(window.localStorage)
+		{
+			window.localStorage['web-gui.nameRobot='+window.localStorage.length] = nameRobot;
+		}
+		else
+		{
+			alert("le stockage local de données n'est pas activé, les modifications ne seront pas sauvegardées")
+		}
 	}
 	else
 	{
-		alert("le stockage local de données n'est pas activé, les modifications ne seront pas sauvegardées")
-	}
+		document.getElementById('#Rtabs-'+nameRobot).click();
+		activeRosName = nameRobot;
+		activeRos = rosArray[activeRosName];
+		connect(secure, rosArray[nameRobot]);
+	} 
 	
-
 }
 
 function closeSession()
