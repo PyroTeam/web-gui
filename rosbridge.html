@@ -26,39 +26,37 @@ dans le dossier ou sont stocker les pages js
 
 <script type="text/javascript" src="local/eventemitter2.js"></script>
 <script type="text/javascript" src="local/roslib.js"></script>
-<script type="text/javascript" src="local/jQueryLibraryV1.10.2.js"></script>
+
+<script src="http://code.jquery.com/jquery-2.2.3.js"></script>
 <script type="text/javascript" src="local/jQuery UI - v1.11.4 - 2015-03-11.js"></script>
 
 <link type="text/css" rel="stylesheet" href="css/style_Rtabs.css" />
 <link type="text/css" rel="stylesheet" href="css/style.css" />
 
+<!--<script src="http://cdn.robotwebtools.org/EaselJS/current/easeljs.js"></script>
+<script type="text/javascript" src="http://cdn.robotwebtools.org/ros2djs/current/ros2d.js"></script>
 
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script type="text/javascript" src="local/jQueryLibraryV1.10.2.js"></script>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">/-->
 
 
 
 <script type="text/javascript" src="ros.js"></script>
 <script type="text/javascript" src="form.js"></script>
 <script type="text/javascript" src="tabs.js"></script>
+<script type="text/javascript" src="tab1.js"></script>
 
 	
 <script type="text/javascript">
 
 
-$(document).ready(function() 
-{
-    $("#Ltabs").tabs();
-});
-
-/*$(document).ready(function() 
-{
-    $("#Rtabs").tabs();
-});*/
 function reloadTabs() 
 {
 	$('.tabs .tab-links a').on('click', function(e)  
 	{
 		var currentAttrValue = $(this).attr('href');
+
 		activeRosName = strtok(currentAttrValue,'-')[1];
 		activeRos = rosArray[activeRosName];
 		rosElement = document.querySelector("#Rtabs-"+activeRosName);
@@ -73,7 +71,19 @@ function reloadTabs()
 		//activeRos = getRosFromActiveTab();
 	});
 }
+
+$('#permanent_topic_name').keypress(function(event) 
+{
+    if (event.which == 13) 
+    {
+        event.preventDefault();
+        createLiveSpace(document.getElementById("permanent_robot_name").value,document.getElementById("permanent_topic_name").value);
+    }
+});
+
 $(document).ready(reloadTabs);
+
+
 
 
 </script>    
@@ -126,28 +136,27 @@ $(document).ready(reloadTabs);
 	</div> 	
  	<div id="container">
  		<!--ongelts generaux-->
- 		<div id="Ltabs">
- 			<ul> 
-		       <li><a href="#Ltabs-1">test 1</a></li>
-		       <li><a href="#Ltabs-2">test 2</a></li>
+ 		<div class="tabs" id="Ltabs">
+ 			<ul class="tab-links"> 
+		       <li class="active"><a href="#Ltabs-1">test 1</a></li>
+		       <li class=""><a href="#Ltabs-2">test 2</a></li>
 		    </ul>
-		    <div id="Ltabs-2">
-				<h1>test 2</h1>
+		    <div class="tab-content">		    
+			  	<div id="Ltabs-1" class="tab active">
+			  		<input type="text" id="permanent_robot_name" value="" class="ui-autocomplete-input" placeholder="Nom du robot" size="25" onblur="completeTopics()">
+			  		<input type="text" id="permanent_topic_name" value="" class="ui-autocomplete-input" placeholder="Topic cible" size="25">
+			  		<button type="button" onclick="createLiveSpace(document.getElementById('permanent_robot_name').value,document.getElementById('permanent_topic_name').value);">Show
+			  	</div>
+			  	<div id="Ltabs-2" class="tab">
+					<h1>test 2</h1>
+				</div>
 			</div>
-		  	<div id="Ltabs-1">
-		  		<h1>test 1</h1>
-		  	</div>
  		</div>
  			
  		<!-- onglets robot -->
  		<div class="tabs" id="Rtabs">
- 		<!--
-		lier un onglet à un bloc
-		mettre en place une gestion d'onglet automatique 
- 		-->
  			<ul class="tab-links"> 
  				<li class="active"><a href="#Rtabs-1">Cmd 3 Robots</a></li>
- 				<!--<li><img src="images/plus.jpeg" widht="40px" height="40px" alt="ajout onglet" onclick="addRobot();"/></li>-->
  			</ul>
  			<div class="tab-content">
 	 			
