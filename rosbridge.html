@@ -4,56 +4,36 @@
 <meta charset="utf-8" />
 
 
+<!-- External Libs - Uncompressed (Useful for debug) -->
+<script type="text/javascript" src="external-libs/eventemitter-2.js"></script>
+<script type="text/javascript" src="external-libs/roslib-0.15.0.js"></script>
 
-<!--
-<script type="text/javascript" src="http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script>
-<script type="text/javascript" src="http://cdn.robotwebtools.org/roslibjs/current/roslib.js"></script>
+<script type="text/javascript" src="external-libs/jquery-2.2.4.js"></script>
+<script type="text/javascript" src="external-libs/jquery-ui-1.11.4.js"></script>
 
-A remplacer par un git clone de 
+<!-- External Libs - Minified -->
+<!-- <script type="text/javascript" src="external-libs/eventemitter-2.min.js"></script>
+<script type="text/javascript" src="external-libs/roslib-0.15.0.min.js"></script>
 
-https://github.com/RobotWebTools/roslibjs.git roslibjs/build/roslib.js
-<script type="text/javascript" src="roslibjs/build/roslib.js"></script>
-et 
-https://github.com/asyncly/EventEmitter2.git
-<script type="text/javascript" src="EventEmitter2/lib/eventemitter2.js"></script>
+<script type="text/javascript" src="external-libs/jquery-2.2.4.min.js"></script>
+<script type="text/javascript" src="external-libs/jquery-ui-1.11.4.min.js"></script> -->
 
-<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
-<script src="http://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-dans le dossier ou sont stocker les pages js
-
-<script type="text/javascript" src="http://cdn.robotwebtools.org/mjpegcanvasjs/current/mjpegcanvas.js"></script>
-<link type="text/css" rel="stylesheet" href="css/style_Ltabs.css" />-->
-
-<script type="text/javascript" src="local/eventemitter2.js"></script>
-<script type="text/javascript" src="local/roslib.js"></script>
-
-<script src="http://code.jquery.com/jquery-2.2.3.js"></script>
-<script type="text/javascript" src="local/jQuery UI - v1.11.4 - 2015-03-11.js"></script>
-
+<!-- Stylesheets -->
 <link type="text/css" rel="stylesheet" href="css/style_Rtabs.css" />
 <link type="text/css" rel="stylesheet" href="css/style.css" />
 
-<!--<script src="http://cdn.robotwebtools.org/EaselJS/current/easeljs.js"></script>
-<script type="text/javascript" src="http://cdn.robotwebtools.org/ros2djs/current/ros2d.js"></script>
-
-<script type="text/javascript" src="local/jQueryLibraryV1.10.2.js"></script>
-
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">/-->
-
-
-
+<!-- Local libs -->
 <script type="text/javascript" src="ros.js"></script>
 <script type="text/javascript" src="form.js"></script>
 <script type="text/javascript" src="tabs.js"></script>
 <script type="text/javascript" src="tab1.js"></script>
 
-	
+
 <script type="text/javascript">
 
-
-function reloadTabs() 
+function reloadTabs()
 {
-	$('.tabs .tab-links a').on('click', function(e)  
+	$('.tabs .tab-links a').on('click', function(e)
 	{
 		var currentAttrValue = $(this).attr('href');
 
@@ -72,9 +52,9 @@ function reloadTabs()
 	});
 }
 
-$('#permanent_topic_name').keypress(function(event) 
+$('#permanent_topic_name').keypress(function(event)
 {
-    if (event.which == 13) 
+    if (event.which == 13)
     {
         event.preventDefault();
         createLiveSpace(document.getElementById("permanent_robot_name").value,document.getElementById("permanent_topic_name").value);
@@ -84,12 +64,11 @@ $('#permanent_topic_name').keypress(function(event)
 $(document).ready(reloadTabs);
 
 
+</script>
 
-
-</script>    
 
 </head>
-<body onload="Liste.options[0].selected = true; openSession();" onunload="closeSession();"> 
+<body onload="Liste.options[0].selected = true; openSession();" onunload="closeSession();">
 
   	<header style="margin-top: 0px; margin-bottom: 10px;">  <!-- options disponibles en permanences-->
 		<form method="post" action="#">
@@ -115,7 +94,7 @@ $(document).ready(reloadTabs);
 			<option value="topicSubscriber">Subscribe to a topic
 			<option value="serviceCall">Call a service
 			<option value="paramSetGet">Set and get Param
-			<option value="test">Test	
+			<option value="test">Test
 			</SELECT>
 			<br>
 			<div class="ui-widget">
@@ -123,9 +102,9 @@ $(document).ready(reloadTabs);
 				<br>
 				<input type="text" id="echange2" value="" placeholder="" size="25">
 				<br>
-				<br>	
+				<br>
 			</div>
-	
+
 			<!--<textarea name="message" id="echange3" rows=4 cols=40></textarea>
 			<br>-->
 			<button onclick="lecture();" type="button" id="envoyer" value="envoyer" title="Envoyer">Envoyer</button>
@@ -133,15 +112,15 @@ $(document).ready(reloadTabs);
 		</form>
 		<div id="echange_interactif">
 		</div>
-	</div> 	
+	</div>
  	<div id="container">
  		<!--ongelts generaux-->
  		<div class="tabs" id="Ltabs">
- 			<ul class="tab-links"> 
+ 			<ul class="tab-links">
 		       <li class="active"><a href="#Ltabs-1">test 1</a></li>
 		       <li class=""><a href="#Ltabs-2">test 2</a></li>
 		    </ul>
-		    <div class="tab-content">		    
+		    <div class="tab-content">
 			  	<div id="Ltabs-1" class="tab active">
 			  		<input type="text" id="permanent_robot_name" value="" class="ui-autocomplete-input" placeholder="Nom du robot" size="25" onblur="completeTopics()">
 			  		<input type="text" id="permanent_topic_name" value="" class="ui-autocomplete-input" placeholder="Topic cible" size="25">
@@ -152,14 +131,14 @@ $(document).ready(reloadTabs);
 				</div>
 			</div>
  		</div>
- 			
+
  		<!-- onglets robot -->
  		<div class="tabs" id="Rtabs">
- 			<ul class="tab-links"> 
+ 			<ul class="tab-links">
  				<li class="active"><a href="#Rtabs-1">Cmd 3 Robots</a></li>
  			</ul>
  			<div class="tab-content">
-	 			
+
 	 			<div id="Rtabs-1" class="tab active">
 	 				<legend>Echange commun</legend>
 	 				<fieldset style="height:150px; overflow-y: scroll;" >
@@ -175,7 +154,7 @@ $(document).ready(reloadTabs);
 							<option value="topicSubscriber">Subscribe to a topic
 							<option value="serviceCall">Call a service
 							<option value="paramSetGet">Set and get Param
-							<option value="test">Test	
+							<option value="test">Test
 						</SELECT>
 						<br>
 						<div class="ui-widget">
@@ -183,9 +162,9 @@ $(document).ready(reloadTabs);
 							<br>
 							<input type="text" id="echange2" value="" placeholder="" size="25">
 							<br>
-							<br>	
+							<br>
 						</div>
-			
+
 					<br>
 					<button onclick="lecture();" type="button" id="envoyer" value="envoyer" title="Envoyer">Envoyer</button>
 					<button onclick="function_test();" type="button" id="test" value="test" title="Test">Test</button>
@@ -196,6 +175,6 @@ $(document).ready(reloadTabs);
 	 		</div>
 		</div>
 	</div>
- 	</div> 	
+ 	</div>
 </body>
 </html>
