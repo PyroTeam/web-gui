@@ -1,17 +1,17 @@
 function addRobot(secure)
 {
-	var nameRobot = document.getElementById('name').value; 
+	var nameRobot = document.getElementById('name').value;
 	if(robotList.indexOf(nameRobot) == -1)
 	{
 		$("#Rtabs ul").append("<li class=\'\''><a id='#Rtabs-"+nameRobot+"' href='#Rtabs-"+nameRobot+"'>"+nameRobot+"</a></li>");
 		$("#Rtabs .tab-content").append("<div class='tab' id='Rtabs-"+nameRobot+"'>"+document.getElementById('example').innerHTML+"</div>");
 		reloadTabs();
 		document.getElementById('#Rtabs-'+nameRobot).click();
-		
+
 		ROSLIBArray[nameRobot] = ROSLIB;
 		rosArray[nameRobot] = new ROSLIBArray[nameRobot].Ros;
 
-	
+
 		robotList.push(nameRobot);
 		activeRosName = nameRobot;
 		activeRos = rosArray[activeRosName];
@@ -35,8 +35,8 @@ function addRobot(secure)
 		activeRosName = nameRobot;
 		activeRos = rosArray[activeRosName];
 		connect(secure, rosArray[nameRobot]);
-	} 
-	
+	}
+
 }
 
 function closeSession()
@@ -54,7 +54,7 @@ function openSession()
 	if(window.localStorage && window.localStorage.length != 0)
 	{
 		console.log(window.localStorage.length);
-		for (var i = 0; i < window.localStorage.length; i++) 
+		for (var i = 0; i < window.localStorage.length; i++)
 		{
 			item = "web-gui.nameRobot="+i;
 			console.log(item);
@@ -63,7 +63,7 @@ function openSession()
 			$(".tab-content").append("<div class='tab' id='Rtabs-"+nameRobot+"'>"+document.getElementById('example').innerHTML+"</div>");
 			reloadTabs();
 			document.getElementById('#Rtabs-'+nameRobot).click();
-	
+
 			ROSLIBArray[nameRobot] = ROSLIB;
 			rosArray[nameRobot] = new ROSLIBArray[nameRobot].Ros;
 			connect(secure, rosArray[nameRobot]);

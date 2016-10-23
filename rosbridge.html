@@ -54,11 +54,11 @@ function reloadTabs()
 
 $('#permanent_topic_name').keypress(function(event)
 {
-    if (event.which == 13)
-    {
-        event.preventDefault();
-        createLiveSpace(document.getElementById("permanent_robot_name").value,document.getElementById("permanent_topic_name").value);
-    }
+	if (event.which == 13)
+	{
+		event.preventDefault();
+		createLiveSpace(document.getElementById("permanent_robot_name").value,document.getElementById("permanent_topic_name").value);
+	}
 });
 
 $(document).ready(reloadTabs);
@@ -70,15 +70,15 @@ $(document).ready(reloadTabs);
 </head>
 <body onload="Liste.options[0].selected = true; openSession();" onunload="closeSession();">
 
-  	<header style="margin-top: 0px; margin-bottom: 10px;">  <!-- options disponibles en permanences-->
+	<header style="margin-top: 0px; margin-bottom: 10px;">  <!-- options disponibles en permanences-->
 		<form method="post" action="#">
-		 	<input type="text" size="10" value="127.0.0.1:9090" id="ip">
-		 	<input type="text" size="10" value="robotino" id="name">
-		  	<button value="connecter" id="connecter" type="button" onclick="addRobot(document.getElementById('secure').checked);">Connection</button>
-		  	<input type="checkbox" id="secure" checked="true">Connexion sécurisée
-		  	<input type="checkbox" id="save">Sauvegarde
+			<input type="text" size="10" value="127.0.0.1:9090" id="ip">
+			<input type="text" size="10" value="robotino" id="name">
+			<button value="connecter" id="connecter" type="button" onclick="addRobot(document.getElementById('secure').checked);">Connection</button>
+			<input type="checkbox" id="secure" checked="true">Connexion sécurisée
+			<input type="checkbox" id="save">Sauvegarde
 		</form>
- 	</header>
+	</header>
 	<div id="example" style="display: none;">
 		<legend>Echange</legend>
 		<fieldset style="height:150px; overflow-y: scroll;" >
@@ -89,21 +89,21 @@ $(document).ready(reloadTabs);
 		<form name="echange" action="#" method="post">
 
 			<SELECT id="Liste" onChange="Lien_action()">
-			<option value="" selected="selected">Choisir une Action
-			<option value="topicPublisher">Publish a topic
-			<option value="topicSubscriber">Subscribe to a topic
-			<option value="serviceCall">Call a service
-			<option value="paramSetGet">Set and get Param
-			<option value="test">Test
-			</SELECT>
-			<br>
-			<div class="ui-widget">
-				<input type="text" id="echange1" value="" placeholder="" size="25">
-				<br>
-				<input type="text" id="echange2" value="" placeholder="" size="25">
-				<br>
-				<br>
-			</div>
+				<option value="" selected="selected">Choisir une Action
+					<option value="topicPublisher">Publish a topic
+						<option value="topicSubscriber">Subscribe to a topic
+							<option value="serviceCall">Call a service
+								<option value="paramSetGet">Set and get Param
+									<option value="test">Test
+									</SELECT>
+									<br>
+									<div class="ui-widget">
+										<input type="text" id="echange1" value="" placeholder="" size="25">
+										<br>
+										<input type="text" id="echange2" value="" placeholder="" size="25">
+										<br>
+										<br>
+									</div>
 
 			<!--<textarea name="message" id="echange3" rows=4 cols=40></textarea>
 			<br>-->
@@ -113,49 +113,49 @@ $(document).ready(reloadTabs);
 		<div id="echange_interactif">
 		</div>
 	</div>
- 	<div id="container">
- 		<!--ongelts generaux-->
- 		<div class="tabs" id="Ltabs">
- 			<ul class="tab-links">
-		       <li class="active"><a href="#Ltabs-1">test 1</a></li>
-		       <li class=""><a href="#Ltabs-2">test 2</a></li>
-		    </ul>
-		    <div class="tab-content">
-			  	<div id="Ltabs-1" class="tab active">
-			  		<input type="text" id="permanent_robot_name" value="" class="ui-autocomplete-input" placeholder="Nom du robot" size="25" onblur="completeTopics()">
-			  		<input type="text" id="permanent_topic_name" value="" class="ui-autocomplete-input" placeholder="Topic cible" size="25">
-			  		<button type="button" onclick="createLiveSpace(document.getElementById('permanent_robot_name').value,document.getElementById('permanent_topic_name').value);">Show
-			  	</div>
-			  	<div id="Ltabs-2" class="tab">
+	<div id="container">
+		<!--ongelts generaux-->
+		<div class="tabs" id="Ltabs">
+			<ul class="tab-links">
+				<li class="active"><a href="#Ltabs-1">test 1</a></li>
+				<li class=""><a href="#Ltabs-2">test 2</a></li>
+			</ul>
+			<div class="tab-content">
+				<div id="Ltabs-1" class="tab active">
+					<input type="text" id="permanent_robot_name" value="" class="ui-autocomplete-input" placeholder="Nom du robot" size="25" onblur="completeTopics()">
+					<input type="text" id="permanent_topic_name" value="" class="ui-autocomplete-input" placeholder="Topic cible" size="25">
+					<button type="button" onclick="createLiveSpace(document.getElementById('permanent_robot_name').value,document.getElementById('permanent_topic_name').value);">Show
+				</div>
+				<div id="Ltabs-2" class="tab">
 					<h1>test 2</h1>
 				</div>
 			</div>
- 		</div>
+		</div>
 
- 		<!-- onglets robot -->
- 		<div class="tabs" id="Rtabs">
- 			<ul class="tab-links">
- 				<li class="active"><a href="#Rtabs-1">Cmd 3 Robots</a></li>
- 			</ul>
- 			<div class="tab-content">
+		<!-- onglets robot -->
+		<div class="tabs" id="Rtabs">
+			<ul class="tab-links">
+				<li class="active"><a href="#Rtabs-1">Cmd 3 Robots</a></li>
+			</ul>
+			<div class="tab-content">
 
-	 			<div id="Rtabs-1" class="tab active">
-	 				<legend>Echange commun</legend>
-	 				<fieldset style="height:150px; overflow-y: scroll;" >
-	 					<legend> Conversation </legend>
-	 					<div id="conversation"></div>
-	 				</fieldset>
+				<div id="Rtabs-1" class="tab active">
+					<legend>Echange commun</legend>
+					<fieldset style="height:150px; overflow-y: scroll;" >
+						<legend> Conversation </legend>
+						<div id="conversation"></div>
+					</fieldset>
 
-	 				<form name="echange" action="#" method="post">
+					<form name="echange" action="#" method="post">
 
-	 					<SELECT id="Liste" onChange="Lien_action()">
+						<select id="Liste" onChange="Lien_action()">
 							<option value="" selected="selected">Choisir une Action
 							<option value="topicPublisher">Publish a topic
 							<option value="topicSubscriber">Subscribe to a topic
 							<option value="serviceCall">Call a service
 							<option value="paramSetGet">Set and get Param
 							<option value="test">Test
-						</SELECT>
+						</select>
 						<br>
 						<div class="ui-widget">
 							<input type="text" id="echange1" value="" placeholder="" size="25">
@@ -172,9 +172,9 @@ $(document).ready(reloadTabs);
 					<div id="echange_interactif">
 					</div>
 				</div>
-	 		</div>
+			</div>
 		</div>
 	</div>
- 	</div>
+	</div>
 </body>
 </html>

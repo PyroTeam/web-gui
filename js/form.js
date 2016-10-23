@@ -57,8 +57,8 @@ function genFromForm(typedef)
 	{
 		while (rosElement.querySelector('#i'+i) != null)
 		{
-			
-			if  (rosElement.querySelector('#i'+i).innerHTML != '') 
+
+			if  (rosElement.querySelector('#i'+i).innerHTML != '')
 			{
 				if (i != 1)
 					j++;
@@ -76,16 +76,16 @@ function genFromForm(typedef)
 			i++;
 		}
 	}
-	return typedef;	
+	return typedef;
 }
 
 //lis un objet complexe et l'affiche via converse
-function genFromObject(object) 
+function genFromObject(object)
 {
 	console.log("gen"+object);
 	console.log("gen value"+object.value);
 	console.log("gen string"+toString(object));
-	for (var key in object) 
+	for (var key in object)
 	{
 		if (typeof object[key] === 'object')
 		{
@@ -93,7 +93,7 @@ function genFromObject(object)
 			converse(key+"\n");
 			genFromObject(object[key]);
 		}
-		else 
+		else
 		{
 			//converse("name:"+key+" name:"+object[key]+" iteration:"+iteration);
 			converse(key +" "+ object[key]+"\n");
@@ -110,19 +110,19 @@ function conf(ech1)
 		var type = rosElement.querySelector('#i0').innerHTML;
 		//var i = 1,j = 0;
 		typedef = genFromForm(typedef);
-		
+
 		var message = new ROSLIB.Message;
 		message = typedef;
 		publisher(ech1,type,message,Ros);
 	}
 
-	if (action == "serviceCall") 
+	if (action == "serviceCall")
 	{
 		Ros.getServiceType(ech1,function(serviceTypes)
 		{
-			
+
 			var type = rosElement.querySelector('#i0').innerHTML;
-			if(rosElement.querySelector('#i1') != null)  
+			if(rosElement.querySelector('#i1') != null)
 			{
 				typedef = genFromForm(typedef); //verifier l'existence d'1 input
 			}
@@ -133,7 +133,7 @@ function conf(ech1)
 	};
 }
 
-//génère un formulaire interactif à partir d'un object 
+//génère un formulaire interactif à partir d'un object
 function recursive_key(object, iteration,formulaire)
 {
 	if (formulaire != '')
@@ -142,7 +142,7 @@ function recursive_key(object, iteration,formulaire)
 		//document.getElementById('echange_interactif').innerHTML = formulaire;
 		form = formulaire;
 	}
-	for (var key in object) 
+	for (var key in object)
 	{
 
 		id_echange_interactif++
@@ -155,7 +155,7 @@ function recursive_key(object, iteration,formulaire)
 			form += formulaire;
 			recursive_key(object[key],iteration++,'');
 		}
-		else 
+		else
 		{
 			//converse("name:"+key+" name:"+object[key]+" iteration:"+iteration);
 			formulaire = key+" <input type=\"text\" id='i"+id_echange_interactif+"'name=\""+key+"\" value=\"\" placeholder=\""+object[key]+"\"size=\"15\">";
@@ -185,7 +185,7 @@ function A_topicPublisher(ech1,ech2,Ros)
 			$('#Rtabs .tab.active #echange_interactif').append(element + form+'<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button></form></fieldset>');
 			//document.getElementById('echange_interactif').innerHTML += '<br><br><button onclick="conf(\''+ech1+'\');" type="button" id="confirmer" value="confirmer" title="Confirmer">Confirmer</button>';
 			id_echange_interactif = 0;
-			
+
 		});
 	});
 }
@@ -240,8 +240,8 @@ function A_paramSetGet(ech1,ech2,Ros)
 				getParam(ech1,Ros);
 			}
 		}
-			
-	});				
+
+	});
 }
 
 function A_test(ech1,ech2,Ros)
@@ -263,7 +263,7 @@ function A_test(ech1,ech2,Ros)
 			name : "/map",
 			messageType : "nav_msgs/OccupancyGrid"
 		});
-	topicTest.subscribe(function(message) 
+	topicTest.subscribe(function(message)
 	{
 		ROS2D.OccupancyGrid(messgae);
 		topic.unsubscribe();
@@ -278,7 +278,7 @@ function lecture()
 	ech1 = rosElement.querySelector('#echange1').value;
 	ech2 = rosElement.querySelector('#echange2').value;
 	console.log('lecture '+action);
-	
+
 	switch(action)
 	{
 		case "test":
@@ -304,8 +304,8 @@ function lecture()
 		default:
 		converse("erreur action : "+action+" inconnue");
 		break;
-	}	
-}	
+	}
+}
 
 
 
@@ -335,7 +335,7 @@ paramSetGet[1] = "If setting, value";
 var action="";
 
 //modifie les placeholder et les autocomplete selon les cas
-function Lien_action() 
+function Lien_action()
 {
 
 	rosElement.querySelector("#echange1").className = "";
@@ -369,9 +369,9 @@ function Lien_action()
 			{
 				rosElement.querySelector("#echange1").className = "ui-autocomplete-input";
 				autoComplete_AT('echange1',topics);
-			});	
+			});
 		}
-		if (i==3) 
+		if (i==3)
 		{
 			activeRos.getServices(function(services)
 			{
@@ -379,7 +379,7 @@ function Lien_action()
 				autoComplete_AT('echange1',services);
 			})
 		}
-		if (i==4) 
+		if (i==4)
 		{
 			activeRos.getParams(function(params)
 			{
@@ -390,14 +390,14 @@ function Lien_action()
 	}
 }
 
-function completeTopics () 
+function completeTopics ()
 {
 	var name = document.getElementById("permanent_robot_name").value;
 	if(robotList.indexOf(name) != -1)
 	rosArray[name].getTopics(function(topics)
 	{
 		autoComplete('permanent_topic_name',topics);
-	});	
+	});
 }
 
 
@@ -408,7 +408,7 @@ function autoComplete(inputId,array)
 		var id = "#"+inputId;
 		$( id ).autocomplete({source:array});
 	});
-}	
+}
 
 function removeAC(inputId)
 {
@@ -437,5 +437,5 @@ function autoComplete_AT(inputId,array)
 		var id = ".tab.active #"+inputId;
 		$( id ).autocomplete({source:array});
 	});
-}	
+}
 

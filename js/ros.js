@@ -10,34 +10,34 @@ function connect(secure, Ros)
 			{
 				Ros.connect('wss://'+ip);
 			}
-			else 
+			else
 			{
-				Ros.connect('ws://'+ip); 
+				Ros.connect('ws://'+ip);
 			}
-			
-			Ros.on('connection', function() 
+
+			Ros.on('connection', function()
 			{
 			console.log('Connected to websocket server.');
 			status='Connected';
 			converse(status);
-	  		});
+			});
 
-	  		Ros.on('error', function(error) {
+			Ros.on('error', function(error) {
 			console.log('Error connecting to websocket server: ', error);
 			converse("Error");
-	  		});
+			});
 
-	  		Ros.on('close', function() {
+			Ros.on('close', function() {
 			console.log('Connection to websocket server closed.');
 			status="Closed";
 			converse(status);
-	  		});
+			});
 
-	  		//return Ros;
+			//return Ros;
 
 
 
-		/*else 
+		/*else
 		{
 			console.log('Already connected');
 			converse('Already connected');
@@ -60,7 +60,7 @@ function publisher(Name, MsgType, Message, Ros)
 	({
 		ros : Ros,
 		name : Name,
-		messageType : MsgType 
+		messageType : MsgType
 	});
 
 	topic.publish(Message);
@@ -82,18 +82,18 @@ function subscriber(TopicName, MessageType, Ros)
 	});
 
 
-	topic.subscribe(function(message) 
+	topic.subscribe(function(message)
 	{
-	  	console.log('received message on ' + topic.name + ': ' + message);
-	  	console.log(message);
-	  	var data='';
-	  	for (var key in message) 
-	  	{
+		console.log('received message on ' + topic.name + ': ' + message);
+		console.log(message);
+		var data='';
+		for (var key in message)
+		{
 
-	    	data += key +' ' + message[key]+'; ';
+			data += key +' ' + message[key]+'; ';
 		}
 		converse(data);
-	  	topic.unsubscribe();
+		topic.unsubscribe();
 	});
 
 
@@ -107,16 +107,16 @@ function liveSpaceSubscriber(NameRobot, TopicName, MessageType, Ros)
 		messageType : MessageType
 	});
 
-	topic.subscribe(function(message) 
+	topic.subscribe(function(message)
 	{
-	  	console.log('received message on ' + topic.name + ': ');	
-	  	console.log(message);
-	  	topic.unsubscribe();
-	  	var data='';
-	  	for (var key in message) 
+		console.log('received message on ' + topic.name + ': ');
+		console.log(message);
+		topic.unsubscribe();
+		var data='';
+		for (var key in message)
 		{
-	  		data += key +'<span class="' + key +'" ></span><br>';
-		}  	
+			data += key +'<span class="' + key +'" ></span><br>';
+		}
 		console.log(data);
 
 		var id = NameRobot+"-"+TopicName;
@@ -125,9 +125,9 @@ function liveSpaceSubscriber(NameRobot, TopicName, MessageType, Ros)
 		id = id.replace('/','-');
 		id = id.replace('/','-');
 		console.log(id);
-	  	$('#Ltabs-1').append("<fieldset class="+id+"><legend>" + NameRobot + " " + TopicName +"</legend>"+data+"</fieldset>");
+		$('#Ltabs-1').append("<fieldset class="+id+"><legend>" + NameRobot + " " + TopicName +"</legend>"+data+"</fieldset>");
 
-	  	for (var key in message) 
+		for (var key in message)
 		{
 			/*console.log("message:");
 			console.log(message);
@@ -135,9 +135,9 @@ function liveSpaceSubscriber(NameRobot, TopicName, MessageType, Ros)
 			console.log(message[key]);
 			console.log("key");
 			console.log(key);*/
-	  		genSpanInfoFromObject(message[key],key,NameRobot,TopicName);
-		}	
-	  	getLiveInfo(NameRobot,TopicName); 
+			genSpanInfoFromObject(message[key],key,NameRobot,TopicName);
+		}
+		getLiveInfo(NameRobot,TopicName);
 	});
 }
 
@@ -151,22 +151,22 @@ function pSubscriber(NameRobot, TopicName, MessageType, def, Ros)
 		messageType : MessageType
 	});
 
-	topic.subscribe(function(message) 
-	{	
+	topic.subscribe(function(message)
+	{
 		var type = new Array;
 		var i=0;
-	  	for (var key in def) 
+		for (var key in def)
 		{
 			type[i] = (def[key].fieldtypes);
 			i++;
-		}	
+		}
 		//console.log(message);
-		for (var key in message) 
+		for (var key in message)
 		{
 			//console.log(message[key]);
 
 		}
-		genInfoFromObject(message,type,NameRobot,TopicName);		
+		genInfoFromObject(message,type,NameRobot,TopicName);
 	});
 }
 
@@ -191,7 +191,7 @@ function getSrvRequestDetails(srvType, Ros, callback)
 	{
 		console.log(result);
 		console.log(result.typedefs)
-		if (typeof callback === 'function') 
+		if (typeof callback === 'function')
 		{
 			callback(result.typedefs);
 		};
@@ -228,7 +228,7 @@ function callSrv(srvName,srvType,srvRequest, Ros)
 		name : srvName,
 		type : srvType
 	});
-	
+
 	service.callService(srvRequest, function(result)
 	{
 		getSrvResponseDetails(type, Ros, function(response)
@@ -278,7 +278,7 @@ function setParam(paramName, value, Ros)
 
 }
 
-function getParam(paramName, Ros) 
+function getParam(paramName, Ros)
 {
 	var paramsClient = new ROSLIB.Service({
 		ros : Ros,
@@ -293,11 +293,11 @@ function getParam(paramName, Ros)
 	});
 
 
- 	paramsClient.callService(request, function(result) 
- 	{
-    	converse("value of "+paramName+" : "+result.value);
-    	paramValue=result.value;
- 	});
+	paramsClient.callService(request, function(result)
+	{
+		converse("value of "+paramName+" : "+result.value);
+		paramValue=result.value;
+	});
 
 }
 
@@ -311,6 +311,6 @@ function strtok(word, delim)
 {
 
 	delim_escaped = new RegExp('[' + delim.replace(/[\[\]\(\)\*\+\?\.\\\^\$\|\#\-\{\}\/]/g, "\\$&") + ']', 'g');
-  	//return word.replace(delim_escaped, delim[0]).split(delim[0]);
-  	return word.split(delim_escaped);
+	//return word.replace(delim_escaped, delim[0]).split(delim[0]);
+	return word.split(delim_escaped);
 }
