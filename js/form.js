@@ -10,10 +10,10 @@ var rosArray = new Array;
 var ROSLIBArray = new Array;
 var activeRos;
 var activeRosName;
-var rosElement; 
+var rosElement;
 var robotList = new Array;
 var activeRosName;
-var rosElement; 
+var rosElement;
 
 /*function ROS(ROSLIB,)
 {
@@ -24,17 +24,17 @@ var rosElement;
 
 //publie un message dans le chat
 
-function converse(message) 
+function converse(message)
 {
 	//var maj = document.getElementById("conversation").innerHTML;
 	var maj = $('.tab.active #conversation').html();
 	maj += '<br>' + message;
 	//document.getElementById("conversation").innerHTML = maj;
 	$('#Rtabs .tab.active #conversation').html(maj);
-} 
+}
 
 // rempli un objet défini mais vide à partir d'un formulaire
-function genFromForm(typedef)  
+function genFromForm(typedef)
 {
 	var navigateur = new Array;
 	var i = 1,j = 0;
