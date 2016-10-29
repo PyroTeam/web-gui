@@ -1,0 +1,319 @@
+#!/bin/bash
+
+#####################################################################
+
+## Libraries
+# (MUST follows the format url|name)
+declare -a LIBS_INFOS
+
+# JQuery and Jquery UI
+LIBS_INFOS[${#LIBS_INFOS[*]}]='http://code.jquery.com/jquery-2.2.4.js|jquery-2.2.4.js'
+LIBS_INFOS[${#LIBS_INFOS[*]}]='http://code.jquery.com/jquery-2.2.4.min.js|jquery-2.2.4.min.js'
+LIBS_INFOS[${#LIBS_INFOS[*]}]='http://code.jquery.com/ui/1.11.4/jquery-ui.js|jquery-ui-1.11.4.js'
+LIBS_INFOS[${#LIBS_INFOS[*]}]='http://code.jquery.com/ui/1.11.4/jquery-ui.min.js|jquery-ui-1.11.4.min.js'
+
+# RoslibJS
+LIBS_INFOS[${#LIBS_INFOS[*]}]='http://cdn.robotwebtools.org/roslibjs/0.15.0/roslib.js|roslib-0.15.0.js'
+LIBS_INFOS[${#LIBS_INFOS[*]}]='http://cdn.robotwebtools.org/roslibjs/0.15.0/roslib.min.js|roslib-0.15.0.min.js'
+# XXX: Find a fixed version link
+LIBS_INFOS[${#LIBS_INFOS[*]}]='http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.js|eventemitter-2.js'
+LIBS_INFOS[${#LIBS_INFOS[*]}]='http://cdn.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js|eventemitter-2.min.js'
+
+
+#####################################################################
+
+
+
+## Constants
+EXT_LIBS_DEST_ROOT=/
+EXT_LIBS_DEST_LDIR=var/www/html/external-libs-js
+EXT_LIBS_DEST="$EXT_LIBS_DEST_ROOT/$EXT_LIBS_DEST_LDIR"
+DEFAUTLT_TARBALL_FN=web-gui-ext-libs.tgz
+TMP_DIR="tmp.$RANDOM/"
+
+ACTION_MAKE_TARBALL=0
+ACTION_DEPLOY_FROM_WEB=1
+ACTION_DEPLOY_FROM_TARBALL=3
+
+## GlobalVars
+MISSING_REQUIRED=0
+ACTION=$ACTION_DEPLOY_FROM_WEB
+TARBALL_FN=$DEFAUTLT_TARBALL_FN
+
+
+## Functions
+checkRequired()
+{
+	CMD=$1
+
+	hash $CMD
+	if [ $? -ne 0 ]; then
+		echo "Missing required binary $CMD"
+		MISSING_REQUIRED=1
+	fi
+}
+
+usage()
+{
+	echo    "Usage: $0 [OPTIONS]"
+	echo    "Fetch external javascripts libs from web and deploy them to local directory"
+	echo    ""
+	echo    "Options:"
+	echo -e "  -c [filename]\t\tInstead of deploying locally, save libs into <filename> archive for later deployment"
+	echo -e "\t\t\tIf no <filename> is given, libs will be saved to $DEFAUTLT_TARBALL_FN"
+	echo -e "  -x <filename>\t\tInstead of fetching libs from web, use libs previously saved into <filename> with -c option."
+	echo -e "  -h \t\t\tPrint this help"
+}
+
+fetchLibsFromWeb()
+{
+	echo "Fetching libs from web"
+
+	local NO_ERROR=1
+
+	# Exit on errors
+	set -e
+
+	# Make temporary dir
+	mkdir -p $TMP_DIR/$EXT_LIBS_DEST_LDIR
+
+	# Back to normal
+	set +e
+
+	# Fetch each libs
+	for LIB_INFO in ${LIBS_INFOS[*]} ; do
+		URL=$(echo $LIB_INFO | cut -d\| -f 1)
+		LIB_LFN=$(echo $LIB_INFO | cut -d\| -f 2)
+		LIB_FN="$TMP_DIR/$EXT_LIBS_DEST_LDIR/$LIB_LFN"
+		echo -n " * Fetching $LIB_FN from $URL ... "
+		wget --quiet --output-document=$LIB_FN --retry-connrefused --tries=11 $URL \
+		&& chmod 440 $LIB_FN && chown www-data $LIB_FN
+		if [ $? -ne 0 ]; then
+			echo "fail"
+			NO_ERROR=0
+		else
+			echo "done"
+		fi
+	done
+
+	# Clean and exit if some libs were not correctly fetched
+	if [ $NO_ERROR -ne 1 ]; then
+		echo "[ERROR] Failed fetching some libs"
+		rm -rf "$TMP_DIR"
+		exit 5
+	fi
+}
+
+deployFromWeb()
+{
+	fetchLibsFromWeb
+	echo -n "Deploy to $EXT_LIBS_DEST ... "
+
+	# Exit on errors
+	set -e
+
+	# Make dest dir
+	mkdir -p $EXT_LIBS_DEST
+	rm -rf $EXT_LIBS_DEST/*
+
+	# Deploy
+	mv --force $TMP_DIR/$EXT_LIBS_DEST_LDIR/* $EXT_LIBS_DEST
+
+	# Remove temp dir
+	rm -rf $TMP_DIR
+
+	# Back to normal
+	set +e
+	echo "done"
+}
+
+makeTarball()
+{
+	fetchLibsFromWeb
+	echo -n "Make tarball $TARBALL_FN ... "
+
+	# Create archive
+	tar --create --gzip --file $TARBALL_FN --directory $TMP_DIR $EXT_LIBS_DEST_LDIR
+
+	# Clean and exit if preceding command failed
+	if [ $? -ne 0 ]; then
+		echo "[ERROR] Failed creating archive"
+		rm -rf "$TMP_DIR"
+		exit 6
+	fi
+
+	echo "done"
+
+	# Exit on errors
+	set -e
+
+	# Remove temp dir
+	rm -rf $TMP_DIR
+
+	# Back to normal
+	set +e
+}
+
+checkTarball()
+{
+	local WRONG_PATH
+	local ALL_PATH
+	local MISSING_LIBS
+
+	echo -n "Check tarball validity ... "
+
+	# Exit on errors
+	set -e
+
+	# File exists and regular ?
+	if [ ! -f $TARBALL_FN ]; then
+		echo "[ERROR] Can't find $TARBALL_FN of file is not a regular one"
+		exit 4
+	fi
+
+	# Does it contains wrong path ?
+	WRONG_PATH=$(tar --list --file $TARBALL_FN | grep -v "$EXT_LIBS_DEST_LDIR/[^/]*$"; true)
+	if [ -n "$WRONG_PATH" ]; then
+		echo "[ERROR] $TARBALL_FN is corrupted. The following paths are invalid : "
+		echo "$WRONG_PATH"
+		exit 9
+	fi
+
+	# Are some lib missing ?
+	# XXX: Maybe stop deployment unless a -f (force) argument is given
+	ALL_FN=$(tar --list --file $TARBALL_FN)
+	for LIB_INFO in ${LIBS_INFOS[*]} ; do
+		LIB_LFN=$(echo $LIB_INFO | cut -d\| -f 2)
+		LIB_FN="$EXT_LIBS_DEST_LDIR/$LIB_LFN"
+		if [[ ! $ALL_FN == *"$LIB_FN"* ]];then
+			MISSING_LIBS+="[Warning] Missing $LIB_FN\n"
+		fi
+	done
+
+	# Back to normal
+	set +e
+
+	if [ -n "$MISSING_LIBS" ]; then
+		echo "warn"
+		echo -e $MISSING_LIBS
+	else
+		echo "done"
+	fi
+}
+
+deployFromTarball()
+{
+	checkTarball
+	echo -n "Deploy from tarball $TARBALL_FN ... "
+
+	# Exit on errors
+	set -e
+
+	# Make dest dir
+	mkdir -p $EXT_LIBS_DEST
+	rm -rf $EXT_LIBS_DEST/*
+
+	# Back to normal
+	set +e
+
+	# Extract libs from archive
+	tar --extract --file $TARBALL_FN --directory $EXT_LIBS_DEST_ROOT
+
+	# Clean and exit if preceding command failed
+	if [ $? -ne 0 ]; then
+		echo "[ERROR] Failed creating archive"
+		rm -rf "$TMP_DIR"
+		exit 6
+	fi
+
+	echo "done"
+}
+
+
+## Main
+# Check that required binaries are installed
+checkRequired id
+checkRequired wget
+checkRequired cut
+checkRequired tar
+checkRequired chmod
+checkRequired chown
+checkRequired mkdir
+checkRequired mv
+checkRequired rm
+
+if [ $MISSING_REQUIRED -eq 1 ]; then
+	echo "[ERROR] Some required binaries are missing, please install them"
+	exit 2
+fi
+
+
+# Manage options
+if [ $# -gt 2 ]; then
+	echo "[ERROR] Too many arguments"
+	echo ""
+	usage
+	exit 1
+fi;
+
+if [ $# -ne 0 ]; then
+	case $1 in
+		-c )
+			if [ $# -eq 2 ]; then
+				TARBALL_FN=$2
+			fi
+			ACTION=$ACTION_MAKE_TARBALL
+			;;
+
+		-x )
+			if [ $# -ne 2 ]; then
+				echo "[ERROR] Missing argument <filename>"
+				echo ""
+				usage
+				exit 1
+			fi
+			TARBALL_FN=$2
+			ACTION=$ACTION_DEPLOY_FROM_TARBALL
+			;;
+
+		* )
+			echo "[ERROR] Wrong arguments given"
+			echo ""
+			usage
+			exit 1
+			;;
+	esac
+fi
+
+
+# MUST be root
+# XXX: Only test if user has needed rights for destination directory and www-data group
+if [ $(id -u) -ne 0 ]; then
+	echo    "[ERROR] Must be run as root. Please retry with : "
+	echo    ""
+	echo -e "sudo $0 $*"
+	exit 10
+fi
+
+
+# Do the work !
+case $ACTION in
+	$ACTION_DEPLOY_FROM_WEB )
+		deployFromWeb
+		;;
+
+	$ACTION_MAKE_TARBALL )
+		makeTarball
+		;;
+
+	$ACTION_DEPLOY_FROM_TARBALL )
+		deployFromTarball
+		;;
+
+	* )
+		echo "[INTERNAL ERR] Unknown action"
+		exit 3
+		;;
+esac
+
+exit 0
