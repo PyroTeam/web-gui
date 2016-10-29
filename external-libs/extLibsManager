@@ -144,6 +144,9 @@ makeTarball()
 
 	echo "done"
 
+	# Exit on errors
+	set -e
+
 	# Remove temp dir
 	rm -rf $TMP_DIR
 
@@ -209,6 +212,9 @@ deployFromTarball()
 	# Make dest dir
 	mkdir -p $EXT_LIBS_DEST
 	rm -rf $EXT_LIBS_DEST/*
+
+	# Back to normal
+	set +e
 
 	# Extract libs from archive
 	tar --extract --file $TARBALL_FN --directory $EXT_LIBS_DEST_ROOT

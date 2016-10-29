@@ -1,7 +1,7 @@
 # Common Javascript libs
 Because of the competition context, the web-gui MUST work offline.  
 So external libs MUST be available in a local known location, which is `WEB_ROOT/external-libs-js/` directory.  
-Libs SHOULD be avaliable in full and minified version.  
+Libs SHOULD be available in full and minified version.  
 Current versions SHOULD be avoided to ensure application reliability. Libs update can be done with care.
 
 **Nota Bene :**
